@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Tawba",
+    "slug": "tawba",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "tawba",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#f2ede4"
+    },
+    "assetBundlePatterns": [],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.tawba.app"
+    },
+    "android": {
+      "package": "com.tawba.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#f2ede4"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      ["expo-notifications"],
+      ["expo-localization"],
+      ["expo-location"],
+      ["expo-router"]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
