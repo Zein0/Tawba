@@ -34,7 +34,32 @@ An Expo (React Native) mobile app that helps Muslims estimate, track, and repay 
 
 > The app is designed to work fully offline after the initial setup. No accounts, ads, or network requests are required.
 
-## Project Structure
+## Building with EAS
+
+This project includes an `eas.json` profile set that works with [EAS Build](https://docs.expo.dev/build/introduction/).
+
+1. Authenticate with Expo:
+   ```bash
+   npx expo login
+   ```
+2. Configure any required credentials (run once per platform):
+   ```bash
+   npx eas credentials
+   ```
+3. Run a build:
+   ```bash
+   npx eas build --platform android --profile production
+   # or
+   npx eas build --platform ios --profile production
+   ```
+4. (Optional) Submit the build to the stores:
+   ```bash
+   npx eas submit --platform android --profile production
+   npx eas submit --platform ios --profile production
+   ```
+
+Use the `development` or `preview` profiles when you need an internal build or development client.
+
 
 - `app/` – routed screens powered by expo-router
 - `src/components/` – reusable UI components
