@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import dayjs from 'dayjs';
@@ -7,6 +7,12 @@ import { computePrayerTimes, schedulePrayerNotifications, PrayerTimeResult } fro
 import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
 import { todayISO, timeNow } from '@/utils/calculations';
+
+interface LocationDetails {
+  city: string | null;
+  country: string | null;
+  formatted: string | null;
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -22,6 +28,7 @@ export const usePrayerTimes = () => {
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [promptPrayer, setPromptPrayer] = useState<PrayerName | null>(null);
+  const [locationDetails, setLocationDetails] = useState<LocationDetails | null>(null);
 
   useEffect(() => {
     if (!settings) return;
@@ -54,6 +61,7 @@ export const usePrayerTimes = () => {
             const request = await Location.requestForegroundPermissionsAsync();
             if (request.status !== Location.PermissionStatus.GRANTED) {
               setError('location-permission');
+              setLocationDetails(null);
               setLoadingLocation(false);
               return;
             }
@@ -64,20 +72,39 @@ export const usePrayerTimes = () => {
         }
 
         if (!coords) {
+          setLocationDetails(null);
           setError('no-location');
           setLoadingLocation(false);
           return;
         }
 
+        setError(null);
+
         const today = dayjs().toDate();
         const times = computePrayerTimes(today, coords);
         setPrayerTimes(times);
+
+        try {
+          const [place] = await Location.reverseGeocodeAsync(coords);
+          const city = place?.city || place?.name || place?.subregion || place?.region || null;
+          const country = place?.country || null;
+          const formatted = city && country ? `${city}, ${country}` : country ?? city;
+          setLocationDetails({ city, country, formatted });
+        } catch {
+          setLocationDetails({
+            city: null,
+            country: null,
+            formatted: `${coords.latitude.toFixed(3)}, ${coords.longitude.toFixed(3)}`
+          });
+        }
+
         if (settings.remindersEnabled) {
           await schedulePrayerNotifications(times, settings.language);
         }
       } catch (err) {
         console.error('Prayer time error', err);
         setError('unknown');
+        setLocationDetails(null);
       } finally {
         setLoadingLocation(false);
       }
@@ -127,5 +154,32 @@ export const usePrayerTimes = () => {
     setPromptPrayer(null);
   };
 
-  return { prayerTimes, loadingLocation, error, promptPrayer, setPromptPrayer, markMissed, logQadhaPrayer };
+  const logCurrentPrayer = async (prayer: PrayerName) => {
+    await addLog({
+      prayer,
+      type: 'current',
+      count: 1,
+      date: todayISO(),
+      loggedAt: timeNow()
+    });
+    setPromptPrayer(null);
+  };
+
+  const nextPrayer = useMemo(() => {
+    const now = dayjs();
+    return prayerTimes.find((pt) => dayjs(pt.time).isAfter(now));
+  }, [prayerTimes]);
+
+  return {
+    prayerTimes,
+    loadingLocation,
+    error,
+    promptPrayer,
+    setPromptPrayer,
+    markMissed,
+    logQadhaPrayer,
+    logCurrentPrayer,
+    locationDetails,
+    nextPrayer
+  };
 };

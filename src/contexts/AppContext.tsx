@@ -8,6 +8,7 @@ import {
   initializeDatabase,
   insertPrayerLog,
   replaceMissedEstimates,
+  resetDatabase,
   updatePrayerLog,
   updateSetting
 } from '@/database';
@@ -32,6 +33,7 @@ interface AppContextShape {
   setRemindersEnabled: (enabled: boolean) => Promise<void>;
   updateLocation: (location: Settings['location']) => Promise<void>;
   incrementMissed: (prayer: PrayerName, amount?: number) => Promise<void>;
+  resetApp: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextShape | undefined>(undefined);
@@ -90,6 +92,14 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
   };
 
   const addLog = async (log: Omit<PrayerLog, 'id'>) => {
+    if (log.type === 'current') {
+      const alreadyLogged = logs.some(
+        (entry) => entry.date === log.date && entry.prayer === log.prayer && entry.type === 'current'
+      );
+      if (alreadyLogged) {
+        throw new Error('log-exists');
+      }
+    }
     await insertPrayerLog(log);
     await refresh();
   };
@@ -134,6 +144,14 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     await refresh();
   };
 
+  const resetApp = async () => {
+    setLoading(true);
+    await resetDatabase();
+    await initializeDatabase();
+    await load();
+    setLoading(false);
+  };
+
   const value: AppContextShape = {
     loading,
     settings,
@@ -151,7 +169,8 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     setTheme,
     setRemindersEnabled,
     updateLocation,
-    incrementMissed
+    incrementMissed,
+    resetApp
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

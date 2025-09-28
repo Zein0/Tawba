@@ -26,6 +26,8 @@ const TabLayout: React.FC = () => {
           switch (route.name) {
             case 'home':
               return <Ionicons name="home" color={color} size={size} />;
+            case 'prayer-times':
+              return <Ionicons name="time" color={color} size={size} />;
             case 'logs':
               return <Ionicons name="book" color={color} size={size} />;
             case 'progress':
@@ -39,6 +41,7 @@ const TabLayout: React.FC = () => {
       })}
     >
       <Tabs.Screen name="home" options={{ title: t('dashboard.greeting') }} />
+      <Tabs.Screen name="prayer-times" options={{ title: t('prayerTimes.shortTitle') }} />
       <Tabs.Screen name="logs" options={{ title: t('logs.title') }} />
       <Tabs.Screen name="progress" options={{ title: t('progress.title') }} />
       <Tabs.Screen name="settings" options={{ title: t('settings.title') }} />

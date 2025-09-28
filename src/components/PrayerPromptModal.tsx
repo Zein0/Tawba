@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, Text, TextInput } from 'react-native';
+import { Alert, Modal, View, Text, TextInput } from 'react-native';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
@@ -11,9 +11,16 @@ interface PrayerPromptModalProps {
   onClose: () => void;
   onMissed: (prayer: PrayerName) => Promise<void>;
   onQadha: (prayer: PrayerName, count: number) => Promise<void>;
+  onOnTime: (prayer: PrayerName) => Promise<void>;
 }
 
-export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({ prayer, onClose, onMissed, onQadha }) => {
+export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
+  prayer,
+  onClose,
+  onMissed,
+  onQadha,
+  onOnTime
+}) => {
   const { t } = useTranslation();
   const { settings } = useAppContext();
   const [step, setStep] = useState<'question' | 'qadha'>('question');
@@ -35,6 +42,19 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({ prayer, on
     onClose();
   };
 
+  const handleOnTime = async () => {
+    try {
+      await onOnTime(prayer);
+      onClose();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'log-exists') {
+        Alert.alert(t('notifications.alreadyLoggedTitle'), t('notifications.alreadyLoggedBody', { prayer: prayerLabel }));
+      } else {
+        Alert.alert(t('notifications.errorTitle'), t('notifications.errorBody'));
+      }
+    }
+  };
+
   const handleQadhaSubmit = async () => {
     const value = Number(count);
     await onQadha(prayer, Number.isNaN(value) ? 0 : value);
@@ -51,8 +71,9 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({ prayer, on
                 {t('notifications.question', { prayer: prayerLabel })}
               </Text>
               <View className="mt-5 gap-3">
-                <Button title={t('notifications.yes')} onPress={() => setStep('qadha')} />
+                <Button title={t('notifications.yesOnTime')} onPress={handleOnTime} />
                 <Button title={t('notifications.no')} variant="secondary" onPress={handleMissed} />
+                <Button title={t('notifications.logQadha')} variant="secondary" onPress={() => setStep('qadha')} />
               </View>
             </>
           ) : (
