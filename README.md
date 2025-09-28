@@ -60,7 +60,6 @@ This project includes an `eas.json` profile set that works with [EAS Build](http
 
 Use the `development` or `preview` profiles when you need an internal build or development client.
 
-## Project Structure
 
 - `app/` – routed screens powered by expo-router
 - `src/components/` – reusable UI components
