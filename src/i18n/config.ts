@@ -1,3 +1,4 @@
+import '@/polyfills/intlPluralRules';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
@@ -7,14 +8,25 @@ export const resources = {
     translation: {
       onboarding: {
         title: 'Missed Prayer Estimator',
-        subtitle: 'How many years of prayers do you think you missed?',
-        yearsLabel: 'Years without prayers',
+        subtitle: 'Start by telling us how long you have been away from prayer.',
+        languagePrompt: 'Choose the language you understand best.',
+        stepLabel: 'Step {{current}} of {{total}}',
+        durationLabel: 'How long have you missed prayers?',
+        durationHint: 'Select a value and timeframe below to personalise your plan.',
+        unitDays: 'Days',
+        unitMonths: 'Months',
+        unitYears: 'Years',
         calculate: 'That is roughly {{count}} prayers.',
-        adjust: 'Adjust by prayer if you know exact numbers.',
+        next: 'Next',
+        adjust: 'Fine-tune each prayer below if you know specific counts.',
         continue: 'Save and continue',
-        acquiringLocation: 'Fetching your location for prayer times…',
-        locationPermission: 'Allow location access to calculate prayer times automatically.',
-        reset: 'Reset adjustments'
+        reset: 'Reset adjustments',
+        acquiringLocation: 'Fetching your location for accurate prayer times…',
+        locationPermission: 'Allow location access to keep your schedule aligned with your city.',
+        locationReady: 'Detected location',
+        locationUnknown: 'Location not set yet.',
+        locationDenied: 'Location permission was denied. You can enable it in system settings.',
+        locationError: 'We could not determine your location. Please try again.'
       },
       dashboard: {
         greeting: 'Peace be upon you',
@@ -76,7 +88,8 @@ export const resources = {
       forms: {
         cancel: 'Cancel',
         confirm: 'Confirm',
-        done: 'Done'
+        done: 'Done',
+        back: 'Back'
       },
       notifications: {
         question: 'Did you pray {{prayer}}?',
@@ -92,14 +105,25 @@ export const resources = {
     translation: {
       onboarding: {
         title: 'تقدير الصلوات الفائتة',
-        subtitle: 'كم سنة تعتقد أنك تركت الصلاة؟',
-        yearsLabel: 'عدد السنوات',
+        subtitle: 'ابدأ بإخبارنا عن المدة التي تركت فيها الصلاة.',
+        languagePrompt: 'اختر اللغة الأنسب لك.',
+        stepLabel: 'الخطوة {{current}} من {{total}}',
+        durationLabel: 'كم مدة ترك الصلاة؟',
+        durationHint: 'أدخل القيمة واختر الإطار الزمني أدناه لتخصيص خطتك.',
+        unitDays: 'أيام',
+        unitMonths: 'أشهر',
+        unitYears: 'سنوات',
         calculate: 'يعادل تقريباً {{count}} صلاة.',
-        adjust: 'عدّل لكل صلاة إذا عرفت الأعداد الدقيقة.',
+        next: 'التالي',
+        adjust: 'يمكنك تعديل عدد كل صلاة إذا كنت تعرف الأعداد الدقيقة.',
         continue: 'حفظ ومتابعة',
-        acquiringLocation: 'جاري تحديد موقعك لأوقات الصلاة…',
-        locationPermission: 'اسمح بالوصول للموقع لحساب أوقات الصلاة تلقائياً.',
-        reset: 'إعادة التعيين'
+        reset: 'إعادة التعيين',
+        acquiringLocation: 'جاري تحديد موقعك لأوقات صلاة أدق…',
+        locationPermission: 'اسمح بالوصول للموقع لضبط الجدول حسب مدينتك.',
+        locationReady: 'تم تحديد الموقع',
+        locationUnknown: 'لم يتم تعيين الموقع بعد.',
+        locationDenied: 'تم رفض إذن الموقع. يمكنك تفعيله من إعدادات الجهاز.',
+        locationError: 'تعذر تحديد موقعك. حاول مرة أخرى.'
       },
       dashboard: {
         greeting: 'السلام عليكم',
@@ -161,7 +185,8 @@ export const resources = {
       forms: {
         cancel: 'إلغاء',
         confirm: 'تأكيد',
-        done: 'تم'
+        done: 'تم',
+        back: 'رجوع'
       },
       notifications: {
         question: 'هل صليت {{prayer}}؟',
