@@ -31,12 +31,14 @@ export const resources = {
       dashboard: {
         greeting: 'Peace be upon you',
         nextPrayer: 'Next prayer',
+        nextPrayerAt: 'Scheduled at {{time}}',
         totalRemaining: 'Missed prayers remaining',
         addLog: 'Log prayer',
         viewLogs: 'View logs',
         todaysProgress: "Today's progress",
         prayed: '{{count}} prayed',
-        missed: '{{count}} missed today'
+        missed: '{{count}} missed today',
+        locationLine: 'You are in {{location}}'
       },
       logs: {
         title: 'Prayer logs',
@@ -52,7 +54,12 @@ export const resources = {
         typeLabel: 'Type',
         timeLabel: 'Logged at',
         dateLabel: 'Date',
-        save: 'Save log'
+        save: 'Save log',
+        duplicateTitle: 'Already logged',
+        duplicateMessage: 'You have already logged this prayer today.',
+        errorTitle: 'Something went wrong',
+        errorMessage: 'We could not save this log. Please try again.',
+        singleCount: '1 prayer'
       },
       progress: {
         title: 'Progress',
@@ -76,7 +83,15 @@ export const resources = {
         large: 'Large',
         arabic: 'Arabic',
         english: 'English',
-        updateLocation: 'Update location'
+        updateLocation: 'Update location',
+        resolvingLocation: 'Resolving address…',
+        resetTitle: 'Reset all data?',
+        resetMessage: 'This will clear your progress and take you back to the start.',
+        resetCancel: 'Cancel',
+        resetConfirm: 'Reset',
+        resetDataTitle: 'Start over',
+        resetDataDescription: 'Clear every log and estimate to restart onboarding.',
+        resetButton: 'Reset app'
       },
       prayers: {
         fajr: 'Fajr',
@@ -95,9 +110,30 @@ export const resources = {
         question: 'Did you pray {{prayer}}?',
         no: 'No, add to missed',
         yes: 'Yes',
+        yesOnTime: 'Yes, prayed on time',
+        logQadha: 'Log qadha',
         qadhaQuestion: 'How many missed prayers did you repay?',
         submit: 'Save',
-        skip: 'Skip'
+        skip: 'Skip',
+        alreadyLoggedTitle: 'Already logged',
+        alreadyLoggedBody: 'You already logged {{prayer}} today.',
+        errorTitle: 'Could not save log',
+        errorBody: 'Please try again in a moment.'
+      },
+      prayerTimes: {
+        title: 'Prayer schedule',
+        shortTitle: 'Prayer times',
+        location: 'Based on {{location}}',
+        locationUnknown: 'Location not set yet.',
+        loading: 'Updating prayer times…',
+        errors: {
+          'location-permission': 'Allow location access in settings to get accurate times.',
+          'no-location': 'We could not detect your location. Try updating it from Settings.',
+          unknown: 'Something went wrong while fetching prayer times.'
+        },
+        upNext: 'Up next',
+        updateHint: 'Keep your location updated to ensure accurate times.',
+        manageLocation: 'Manage location'
       }
     }
   },
@@ -128,12 +164,14 @@ export const resources = {
       dashboard: {
         greeting: 'السلام عليكم',
         nextPrayer: 'الصلاة القادمة',
+        nextPrayerAt: 'موعدها {{time}}',
         totalRemaining: 'الصلاوات المتبقية',
         addLog: 'تسجيل صلاة',
         viewLogs: 'عرض السجل',
         todaysProgress: 'تقدم اليوم',
         prayed: '{{count}} صلوات أُديت',
-        missed: '{{count}} فاتت اليوم'
+        missed: '{{count}} فاتت اليوم',
+        locationLine: 'أنت في {{location}}'
       },
       logs: {
         title: 'سجل الصلوات',
@@ -149,7 +187,12 @@ export const resources = {
         typeLabel: 'النوع',
         timeLabel: 'الوقت',
         dateLabel: 'التاريخ',
-        save: 'حفظ السجل'
+        save: 'حفظ السجل',
+        duplicateTitle: 'مُسجل مسبقاً',
+        duplicateMessage: 'لقد سجلت هذه الصلاة اليوم بالفعل.',
+        errorTitle: 'حدث خطأ',
+        errorMessage: 'تعذر حفظ السجل. حاول مرة أخرى.',
+        singleCount: 'صلاة واحدة'
       },
       progress: {
         title: 'التقدم',
@@ -173,7 +216,15 @@ export const resources = {
         large: 'كبير',
         arabic: 'العربية',
         english: 'الإنجليزية',
-        updateLocation: 'تحديث الموقع'
+        updateLocation: 'تحديث الموقع',
+        resolvingLocation: 'جاري تحديد العنوان…',
+        resetTitle: 'إعادة تعيين جميع البيانات؟',
+        resetMessage: 'سيتم مسح تقدمك وإعادتك للبداية.',
+        resetCancel: 'إلغاء',
+        resetConfirm: 'إعادة',
+        resetDataTitle: 'البدء من جديد',
+        resetDataDescription: 'سيتم حذف السجلات والتقديرات للعودة للإعداد الأولي.',
+        resetButton: 'إعادة تعيين التطبيق'
       },
       prayers: {
         fajr: 'الفجر',
@@ -192,9 +243,30 @@ export const resources = {
         question: 'هل صليت {{prayer}}؟',
         no: 'لم أصلِّ، أضفها للفائتة',
         yes: 'نعم',
+        yesOnTime: 'نعم، في وقتها',
+        logQadha: 'تسجيل قضاء',
         qadhaQuestion: 'كم صلاة فائتة قضيت؟',
         submit: 'حفظ',
-        skip: 'تخطي'
+        skip: 'تخطي',
+        alreadyLoggedTitle: 'مُسجل مسبقاً',
+        alreadyLoggedBody: 'لقد سجلت {{prayer}} اليوم.',
+        errorTitle: 'تعذر حفظ السجل',
+        errorBody: 'حاول مرة أخرى لاحقاً.'
+      },
+      prayerTimes: {
+        title: 'جدول الصلاة',
+        shortTitle: 'أوقات الصلاة',
+        location: 'حسب {{location}}',
+        locationUnknown: 'لم يتم تعيين الموقع بعد.',
+        loading: 'جاري تحديث أوقات الصلاة…',
+        errors: {
+          'location-permission': 'فعّل إذن الموقع من الإعدادات للحصول على أوقات دقيقة.',
+          'no-location': 'تعذر تحديد موقعك. جرّب تحديثه من الإعدادات.',
+          unknown: 'حدث خطأ أثناء جلب أوقات الصلاة.'
+        },
+        upNext: 'الصلاة القادمة',
+        updateHint: 'حدّث موقعك باستمرار لضمان دقة الأوقات.',
+        manageLocation: 'إدارة الموقع'
       }
     }
   }

@@ -17,12 +17,30 @@ const prayerMap: Record<PrayerName, keyof PrayerTimes> = {
   isha: 'isha'
 };
 
+const calculationMethodFactories: Partial<Record<CalculationMethod, () => CalculationParameters>> = {
+  [CalculationMethod.MuslimWorldLeague]: () => CalculationMethod.MuslimWorldLeague(),
+  [CalculationMethod.Egyptian]: () => CalculationMethod.Egyptian(),
+  [CalculationMethod.Karachi]: () => CalculationMethod.Karachi(),
+  [CalculationMethod.UmmAlQura]: () => CalculationMethod.UmmAlQura(),
+  [CalculationMethod.Dubai]: () => CalculationMethod.Dubai(),
+  [CalculationMethod.MoonsightingCommittee]: () => CalculationMethod.MoonsightingCommittee(),
+  [CalculationMethod.NorthAmerica]: () => CalculationMethod.NorthAmerica(),
+  [CalculationMethod.Kuwait]: () => CalculationMethod.Kuwait(),
+  [CalculationMethod.Qatar]: () => CalculationMethod.Qatar(),
+  [CalculationMethod.Singapore]: () => CalculationMethod.Singapore(),
+  [CalculationMethod.Tehran]: () => CalculationMethod.Tehran(),
+  [CalculationMethod.Turkey]: () => CalculationMethod.Turkey(),
+  [CalculationMethod.Other]: () => new CalculationParameters()
+};
+
 export const computePrayerTimes = (
   date: Date,
   coordinates: Coordinates,
   method: CalculationMethod = CalculationMethod.MuslimWorldLeague
 ): PrayerTimeResult[] => {
-  const params: CalculationParameters = CalculationMethod[CalculationMethod[method]];
+  const paramsFactory =
+    calculationMethodFactories[method] ?? calculationMethodFactories[CalculationMethod.MuslimWorldLeague];
+  const params: CalculationParameters = paramsFactory ? paramsFactory() : new CalculationParameters();
   params.madhab = Madhab.Hanafi;
   const times = new PrayerTimes(coordinates, date, params);
   return PRAYER_ORDER.map((prayer) => ({

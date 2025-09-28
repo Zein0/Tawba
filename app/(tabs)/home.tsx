@@ -18,13 +18,16 @@ const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { summaries, logs, addLog } = useAppContext();
-  const { prayerTimes, promptPrayer, setPromptPrayer, markMissed, logQadhaPrayer } = usePrayerTimes();
+  const {
+    promptPrayer,
+    setPromptPrayer,
+    markMissed,
+    logQadhaPrayer,
+    logCurrentPrayer,
+    locationDetails,
+    nextPrayer
+  } = usePrayerTimes();
   const [showForm, setShowForm] = useState(false);
-
-  const nextPrayer = useMemo(() => {
-    const now = dayjs();
-    return prayerTimes.find((pt) => dayjs(pt.time).isAfter(now));
-  }, [prayerTimes]);
 
   const todayLogs = useMemo(() => logs.filter((log) => log.date === todayISO()), [logs]);
 
@@ -49,7 +52,16 @@ const HomeScreen: React.FC = () => {
             {nextPrayer ? t(`prayers.${nextPrayer.prayer}`) : t('dashboard.nextPrayer')}
           </Text>
           {nextPrayer && (
-            <Body className="mt-2">{dayjs(nextPrayer.time).format('h:mm A')}</Body>
+            <Body className="mt-2 text-olive/80">
+              {t('dashboard.nextPrayerAt', { time: dayjs(nextPrayer.time).format('h:mm A') })}
+            </Body>
+          )}
+          {locationDetails?.formatted && (
+            <Body className="mt-2 text-olive/70">
+              {t('dashboard.locationLine', {
+                location: locationDetails.formatted
+              })}
+            </Body>
           )}
         </View>
 
@@ -90,6 +102,7 @@ const HomeScreen: React.FC = () => {
         onClose={() => setPromptPrayer(null)}
         onMissed={markMissed}
         onQadha={logQadhaPrayer}
+        onOnTime={logCurrentPrayer}
       />
     </ScreenContainer>
   );

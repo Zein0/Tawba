@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, View, TextInput, Text } from 'react-native';
+import { Alert, Modal, View, TextInput, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -45,17 +45,31 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
     onClose();
   };
 
+  useEffect(() => {
+    if (type === 'current') {
+      setCount('1');
+    }
+  }, [type]);
+
   const handleSave = async () => {
-    const countValue = Number(count);
-    if (Number.isNaN(countValue) || countValue <= 0) return;
-    await onSubmit({
-      prayer,
-      type,
-      count: countValue,
-      date,
-      loggedAt: time
-    });
-    onDismiss();
+    const countValue = type === 'current' ? 1 : Number(count);
+    if (type === 'qadha' && (Number.isNaN(countValue) || countValue <= 0)) return;
+    try {
+      await onSubmit({
+        prayer,
+        type,
+        count: countValue,
+        date,
+        loggedAt: time
+      });
+      onDismiss();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'log-exists') {
+        Alert.alert(t('logs.duplicateTitle'), t('logs.duplicateMessage'));
+      } else {
+        Alert.alert(t('logs.errorTitle'), t('logs.errorMessage'));
+      }
+    }
   };
 
   const fontSizeClass = useMemo(() => {
@@ -99,18 +113,34 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
           </View>
 
           <View className="flex-row gap-4">
-            <View className="flex-1">
-              <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.countLabel')}</Text>
-              <TextInput
-                keyboardType="number-pad"
-                value={count}
-                onChangeText={setCount}
-                className={clsx(
-                  'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                  settings?.theme === 'dark' && 'border-white/20 text-white'
-                )}
-              />
-            </View>
+            {type === 'qadha' ? (
+              <View className="flex-1">
+                <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.countLabel')}</Text>
+                <TextInput
+                  keyboardType="number-pad"
+                  value={count}
+                  onChangeText={setCount}
+                  className={clsx(
+                    'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
+                    settings?.theme === 'dark' && 'border-white/20 text-white'
+                  )}
+                />
+              </View>
+            ) : (
+              <View className="flex-1 justify-end">
+                <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.countLabel')}</Text>
+                <View
+                  className={clsx(
+                    'rounded-2xl border border-olive/30 px-4 py-3',
+                    settings?.theme === 'dark' && 'border-white/20'
+                  )}
+                >
+                  <Text className={clsx('text-teal', settings?.theme === 'dark' && 'text-white')}>
+                    {t('logs.singleCount')}
+                  </Text>
+                </View>
+              </View>
+            )}
             <View className="flex-1">
               <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.timeLabel')}</Text>
               <TextInput
