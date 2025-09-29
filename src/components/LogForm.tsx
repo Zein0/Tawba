@@ -1,5 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Alert, Modal, View, TextInput, Text } from 'react-native';
+import {
+  Alert,
+  Modal,
+  View,
+  TextInput,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Pressable,
+  Dimensions
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +28,8 @@ interface LogFormProps {
   onSubmit: (log: Omit<PrayerLog, 'id'>) => Promise<void>;
   initial?: PrayerLog | null;
 }
+
+const SHEET_MAX_HEIGHT = Dimensions.get('window').height * 0.9;
 
 export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, initial }) => {
   const { t } = useTranslation();
@@ -83,101 +98,196 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
     }
   }, [settings?.fontSize]);
 
+  const placeholderColor = settings?.theme === 'dark' ? '#9ca3af' : '#94a38c';
+  const borderMuted = settings?.theme === 'dark' ? 'border-white/10' : 'border-olive/20';
+
+  const handleCountChange = (value: string) => {
+    setCount(value.replace(/[^0-9]/g, ''));
+  };
+
+  const handleTimeChange = (value: string) => {
+    setTime(value.replace(/[^0-9:]/g, '').slice(0, 5));
+  };
+
+  const handleDateChange = (value: string) => {
+    setDate(value.replace(/[^0-9-]/g, '').slice(0, 10));
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View className="flex-1 bg-black/40 justify-end">
-        <View className={clsx('rounded-t-3xl bg-white p-6 gap-4', settings?.theme === 'dark' && 'bg-[#1f2429]')}>
-          <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
-            {initial ? t('logs.edit') : t('logs.add')}
-          </Text>
-
-          <View>
-            <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.prayerLabel')}</Text>
-            <View className={clsx('rounded-2xl border border-olive/30', settings?.theme === 'dark' && 'border-white/20')}>
-              <Picker selectedValue={prayer} onValueChange={(value) => setPrayer(value)}>
-                {PRAYER_ORDER.map((p) => (
-                  <Picker.Item key={p} label={t(`prayers.${p}`)} value={p} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-
-          <View>
-            <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.typeLabel')}</Text>
-            <View className={clsx('rounded-2xl border border-olive/30', settings?.theme === 'dark' && 'border-white/20')}>
-              <Picker selectedValue={type} onValueChange={(value) => setType(value)}>
-                <Picker.Item label={t('logs.typeCurrent')} value="current" />
-                <Picker.Item label={t('logs.typeQadha')} value="qadha" />
-              </Picker>
-            </View>
-          </View>
-
-          <View className="flex-row gap-4">
-            {type === 'qadha' ? (
-              <View className="flex-1">
-                <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.countLabel')}</Text>
-                <TextInput
-                  keyboardType="number-pad"
-                  value={count}
-                  onChangeText={setCount}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View className="flex-1 justify-end bg-black/40">
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            className="w-full"
+          >
+            <View
+              style={{ maxHeight: SHEET_MAX_HEIGHT }}
+              className={clsx(
+                'rounded-t-3xl bg-white/95 px-6 pt-6 pb-8 shadow-2xl',
+                settings?.theme === 'dark' && 'bg-[#1f2429]/95'
+              )}
+            >
+              <ScrollView
+                contentContainerStyle={{ paddingBottom: 24 }}
+                showsVerticalScrollIndicator={false}
+              >
+                <Text
                   className={clsx(
-                    'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                    settings?.theme === 'dark' && 'border-white/20 text-white'
-                  )}
-                />
-              </View>
-            ) : (
-              <View className="flex-1 justify-end">
-                <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.countLabel')}</Text>
-                <View
-                  className={clsx(
-                    'rounded-2xl border border-olive/30 px-4 py-3',
-                    settings?.theme === 'dark' && 'border-white/20'
+                    'mb-1 text-lg font-semibold text-teal',
+                    settings?.theme === 'dark' && 'text-white'
                   )}
                 >
-                  <Text className={clsx('text-teal', settings?.theme === 'dark' && 'text-white')}>
-                    {t('logs.singleCount')}
-                  </Text>
+                  {initial ? t('logs.edit') : t('logs.add')}
+                </Text>
+                <Text className={clsx('text-sm text-olive/70', settings?.theme === 'dark' && 'text-white/70')}>
+                  {t('logs.save')}
+                </Text>
+
+                <View className="mt-6 gap-5">
+                  <View className="gap-3">
+                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                      {t('logs.prayerLabel')}
+                    </Text>
+                    <View
+                      className={clsx(
+                        'overflow-hidden rounded-2xl border bg-white/80',
+                        borderMuted,
+                        settings?.theme === 'dark' && 'bg-white/5'
+                      )}
+                    >
+                      <Picker selectedValue={prayer} onValueChange={(value) => setPrayer(value)}>
+                        {PRAYER_ORDER.map((p) => (
+                          <Picker.Item key={p} label={t(`prayers.${p}`)} value={p} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+
+                  <View className="gap-3">
+                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                      {t('logs.typeLabel')}
+                    </Text>
+                    <View className="flex-row gap-3">
+                      {(['current', 'qadha'] as PrayerType[]).map((option) => {
+                        const active = type === option;
+                        return (
+                          <Pressable
+                            key={option}
+                            onPress={() => setType(option)}
+                            className={clsx(
+                              'flex-1 rounded-2xl border px-4 py-3',
+                              active
+                                ? settings?.theme === 'dark'
+                                  ? 'border-teal bg-teal'
+                                  : 'border-olive bg-olive'
+                                : settings?.theme === 'dark'
+                                ? 'border-white/10 bg-white/5'
+                                : 'border-olive/20 bg-white/70'
+                            )}
+                          >
+                            <Text
+                              className={clsx(
+                                'text-center font-semibold',
+                                fontSizeClass,
+                                active ? 'text-white' : settings?.theme === 'dark' ? 'text-white' : 'text-teal'
+                              )}
+                            >
+                              {t(`logs.type${option === 'current' ? 'Current' : 'Qadha'}`)}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View className="flex-row gap-4">
+                    {type === 'qadha' ? (
+                      <View className="flex-1 gap-3">
+                        <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                          {t('logs.countLabel')}
+                        </Text>
+                        <TextInput
+                          keyboardType="number-pad"
+                          inputMode="numeric"
+                          value={count}
+                          onChangeText={handleCountChange}
+                          placeholder="1"
+                          placeholderTextColor={placeholderColor}
+                          className={clsx(
+                            'rounded-2xl border px-4 py-3 text-teal shadow-sm',
+                            borderMuted,
+                            settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                          )}
+                        />
+                      </View>
+                    ) : (
+                      <View className="flex-1 gap-3">
+                        <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                          {t('logs.countLabel')}
+                        </Text>
+                        <View
+                          className={clsx(
+                            'rounded-2xl border px-4 py-3',
+                            borderMuted,
+                            settings?.theme === 'dark' && 'bg-white/5'
+                          )}
+                        >
+                          <Text className={clsx('text-teal', settings?.theme === 'dark' && 'text-white')}>
+                            {t('logs.singleCount')}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+                    <View className="flex-1 gap-3">
+                      <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                        {t('logs.timeLabel')}
+                      </Text>
+                      <TextInput
+                        value={time}
+                        onChangeText={handleTimeChange}
+                        placeholder="HH:mm"
+                        placeholderTextColor={placeholderColor}
+                        className={clsx(
+                          'rounded-2xl border px-4 py-3 text-teal shadow-sm',
+                          borderMuted,
+                          settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                        )}
+                      />
+                    </View>
+                  </View>
+
+                  <View className="gap-3">
+                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                      {t('logs.dateLabel')}
+                    </Text>
+                    <TextInput
+                      value={date}
+                      onChangeText={handleDateChange}
+                      placeholder="YYYY-MM-DD"
+                      placeholderTextColor={placeholderColor}
+                      className={clsx(
+                        'rounded-2xl border px-4 py-3 text-teal shadow-sm',
+                        borderMuted,
+                        settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                      )}
+                    />
+                  </View>
                 </View>
-              </View>
-            )}
-            <View className="flex-1">
-              <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.timeLabel')}</Text>
-              <TextInput
-                value={time}
-                onChangeText={setTime}
-                placeholder="HH:mm"
-                className={clsx(
-                  'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                  settings?.theme === 'dark' && 'border-white/20 text-white'
-                )}
-              />
-            </View>
-          </View>
 
-          <View>
-            <Text className={clsx('mb-2 text-teal/70', fontSizeClass)}>{t('logs.dateLabel')}</Text>
-            <TextInput
-              value={date}
-              onChangeText={setDate}
-              placeholder="YYYY-MM-DD"
-              className={clsx(
-                'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                settings?.theme === 'dark' && 'border-white/20 text-white'
-              )}
-            />
-          </View>
-
-          <View className="flex-row gap-3 pt-2">
-            <View className="flex-1">
-              <Button title={t('forms.cancel')} variant="secondary" onPress={onDismiss} />
+                <View className="mt-6 flex-row gap-3">
+                  <View className="flex-1">
+                    <Button title={t('forms.cancel')} variant="secondary" onPress={onDismiss} />
+                  </View>
+                  <View className="flex-1">
+                    <Button title={t('forms.confirm')} onPress={handleSave} />
+                  </View>
+                </View>
+              </ScrollView>
             </View>
-            <View className="flex-1">
-              <Button title={t('forms.confirm')} onPress={handleSave} />
-            </View>
-          </View>
+          </KeyboardAvoidingView>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

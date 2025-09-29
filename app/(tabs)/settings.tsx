@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, View, Switch, Text } from 'react-native';
+import { Alert, View, Switch, Text, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
@@ -104,9 +104,13 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <ScreenContainer>
-      <Card>
-        <Heading className="mb-4">{t('settings.title')}</Heading>
+    <ScreenContainer padded={false}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 48 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Card>
+          <Heading className="mb-4">{t('settings.title')}</Heading>
 
         <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.language')}</Body>
@@ -186,12 +190,13 @@ const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
-        <View className="rounded-2xl bg-red-50 px-4 py-5">
-          <Heading className="mb-2 text-lg text-red-600">{t('settings.resetDataTitle')}</Heading>
-          <Body className="mb-4 text-red-500">{t('settings.resetDataDescription')}</Body>
-          <Button title={t('settings.resetButton')} variant="secondary" onPress={handleReset} />
-        </View>
-      </Card>
+          <View className="rounded-2xl bg-red-50 px-4 py-5">
+            <Heading className="mb-2 text-lg text-red-600">{t('settings.resetDataTitle')}</Heading>
+            <Body className="mb-4 text-red-500">{t('settings.resetDataDescription')}</Body>
+            <Button title={t('settings.resetButton')} variant="secondary" onPress={handleReset} />
+          </View>
+        </Card>
+      </ScrollView>
     </ScreenContainer>
   );
 };

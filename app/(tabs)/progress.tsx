@@ -1,16 +1,57 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Text, TextInput, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
 import { Heading, Body } from '@/components/Typography';
 import { ProgressBar } from '@/components/ProgressBar';
 import { useAppContext } from '@/contexts/AppContext';
+import { PrayerName } from '@/types';
+import { totalRemaining } from '@/utils/calculations';
+import clsx from 'clsx';
 
 const ProgressScreen: React.FC = () => {
   const { t } = useTranslation();
   const { summaries, projection } = useAppContext();
+  const [selectedPrayer, setSelectedPrayer] = useState<'all' | PrayerName>('all');
+  const [userEditedTarget, setUserEditedTarget] = useState(false);
+  const [dailyTarget, setDailyTarget] = useState(() =>
+    projection.dailyAverage > 0 ? Math.max(1, Math.round(projection.dailyAverage)).toString() : '1'
+  );
+
+  useEffect(() => {
+    if (!userEditedTarget && projection.dailyAverage > 0) {
+      setDailyTarget(Math.max(1, Math.round(projection.dailyAverage)).toString());
+    }
+  }, [projection.dailyAverage, userEditedTarget]);
+
+  const remainingForSelection = useMemo(() => {
+    if (selectedPrayer === 'all') {
+      return totalRemaining(summaries);
+    }
+    return summaries.find((summary) => summary.prayer === selectedPrayer)?.remaining ?? 0;
+  }, [selectedPrayer, summaries]);
+
+  const handleDailyTargetChange = (value: string) => {
+    const sanitized = value.replace(/[^0-9]/g, '');
+    setDailyTarget(sanitized);
+    setUserEditedTarget(true);
+  };
+
+  const dailyTargetNumber = useMemo(() => {
+    if (!dailyTarget) return 0;
+    const parsed = Number(dailyTarget);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }, [dailyTarget]);
+
+  const projectedDate = useMemo(() => {
+    if (dailyTargetNumber <= 0 || remainingForSelection <= 0) {
+      return null;
+    }
+    const daysToClear = Math.ceil(remainingForSelection / dailyTargetNumber);
+    return dayjs().startOf('day').add(daysToClear, 'day');
+  }, [dailyTargetNumber, remainingForSelection]);
 
   return (
     <ScreenContainer>
@@ -22,7 +63,7 @@ const ProgressScreen: React.FC = () => {
             const progress = total === 0 ? 0 : summary.totalQadhaPrayed / total;
             return (
               <View key={summary.prayer} className="mb-5">
-                <View className="flex-row justify-between mb-2">
+                <View className="mb-2 flex-row justify-between">
                   <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
                   <Body>
                     {t('progress.repaid', {
@@ -41,16 +82,70 @@ const ProgressScreen: React.FC = () => {
         </Card>
 
         <Card>
-          {projection.projectedCompletionDate ? (
-            <Body>
-              {t('progress.projected', {
-                average: projection.dailyAverage,
-                date: dayjs(projection.projectedCompletionDate).format('MMM D, YYYY')
+          <Heading className="mb-3 text-xl">{t('progress.filterTitle')}</Heading>
+          <Body className="mb-5 text-olive/70">{t('progress.filterSubtitle')}</Body>
+
+          <View className="mb-5">
+            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+              {t('progress.focusLabel')}
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              {([
+                { value: 'all', label: t('progress.allPrayers') },
+                ...summaries.map((summary) => ({
+                  value: summary.prayer,
+                  label: t(`prayers.${summary.prayer}`)
+                }))
+              ] as { value: 'all' | PrayerName; label: string }[]).map((option) => {
+                const active = selectedPrayer === option.value;
+                return (
+                  <Pressable
+                    key={option.value}
+                    onPress={() => setSelectedPrayer(option.value)}
+                    className={clsx('rounded-full px-4 py-2', active ? 'bg-olive' : 'bg-olive/10')}
+                  >
+                    <Text className={clsx('font-semibold', active ? 'text-white' : 'text-teal')}>
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                );
               })}
+            </View>
+          </View>
+
+          <View className="mb-5">
+            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+              {t('progress.perDayLabel')}
+            </Text>
+            <TextInput
+              value={dailyTarget}
+              onChangeText={handleDailyTargetChange}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              placeholder="3"
+              placeholderTextColor="#a3ad9d"
+              className="rounded-2xl border border-olive/20 px-4 py-3 text-base text-teal"
+            />
+            <Body className="mt-2 text-olive/70">{t('progress.perDayHint')}</Body>
+          </View>
+
+          <View className="rounded-2xl bg-olive/10 px-4 py-4">
+            <Body className="mb-1 font-semibold text-olive">
+              {t('progress.remainingLabel', { count: remainingForSelection.toLocaleString() })}
             </Body>
-          ) : (
-            <Body>{t('progress.projectedUnknown')}</Body>
-          )}
+            {projectedDate ? (
+              <Body>
+                {t('progress.projected', {
+                  average: dailyTargetNumber,
+                  date: projectedDate.format('MMM D, YYYY')
+                })}
+              </Body>
+            ) : remainingForSelection === 0 ? (
+              <Body>{t('progress.clearMessage')}</Body>
+            ) : (
+              <Body>{t('progress.projectedUnknown')}</Body>
+            )}
+          </View>
         </Card>
       </ScrollView>
     </ScreenContainer>
