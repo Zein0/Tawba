@@ -145,7 +145,7 @@ const LogsScreen: React.FC = () => {
                     <Body className="text-sm text-olive/80 dark:text-white/70">
                       {log.type === 'current'
                         ? t('logs.typeCurrent')
-                        : `${t('logs.typeQadha')} · ${log.count}`}
+                        : `${t('logs.typeQada')} · ${log.count}`}
                     </Body>
                     <View
                       className={`rounded-full px-3 py-1 ${
@@ -159,7 +159,7 @@ const LogsScreen: React.FC = () => {
                           log.type === 'current' ? 'text-emerald-600' : 'text-amber-600'
                         }`}
                       >
-                        {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qadha'}`)}
+                        {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qada'}`)}
                       </Text>
                     </View>
                   </View>

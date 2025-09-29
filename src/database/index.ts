@@ -80,6 +80,8 @@ export const initializeDatabase = async () => {
     );
   `);
 
+  await db.execAsync("UPDATE prayer_logs SET type='qada' WHERE type='qadha';");
+
   const defaults: Partial<Settings> = {
     language: 'en',
     fontSize: 'medium',
@@ -186,7 +188,7 @@ export const getPrayerLogs = async (): Promise<PrayerLog[]> => {
     id: row.id,
     date: row.date,
     prayer: row.prayer,
-    type: row.type,
+    type: (row.type === 'qadha' ? 'qada' : row.type) as PrayerType,
     count: row.count,
     loggedAt: row.logged_at
   }));

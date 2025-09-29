@@ -10,7 +10,7 @@ interface PrayerPromptModalProps {
   prayer: PrayerName | null;
   onClose: () => void;
   onMissed: (prayer: PrayerName) => Promise<void>;
-  onQadha: (prayer: PrayerName, count: number) => Promise<void>;
+  onQada: (prayer: PrayerName, count: number) => Promise<void>;
   onOnTime: (prayer: PrayerName) => Promise<void>;
 }
 
@@ -18,12 +18,12 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
   prayer,
   onClose,
   onMissed,
-  onQadha,
+  onQada,
   onOnTime
 }) => {
   const { t } = useTranslation();
   const { settings } = useAppContext();
-  const [step, setStep] = useState<'question' | 'qadha'>('question');
+  const [step, setStep] = useState<'question' | 'qada'>('question');
   const [count, setCount] = useState('1');
 
   useEffect(() => {
@@ -55,9 +55,9 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
     }
   };
 
-  const handleQadhaSubmit = async () => {
+  const handleQadaSubmit = async () => {
     const value = Number(count);
-    await onQadha(prayer, Number.isNaN(value) ? 0 : value);
+    await onQada(prayer, Number.isNaN(value) ? 0 : value);
     onClose();
   };
 
@@ -73,13 +73,13 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
               <View className="mt-5 gap-3">
                 <Button title={t('notifications.yesOnTime')} onPress={handleOnTime} />
                 <Button title={t('notifications.no')} variant="secondary" onPress={handleMissed} />
-                <Button title={t('notifications.logQadha')} variant="secondary" onPress={() => setStep('qadha')} />
+                <Button title={t('notifications.logQada')} variant="secondary" onPress={() => setStep('qada')} />
               </View>
             </>
           ) : (
             <>
               <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
-                {t('notifications.qadhaQuestion')}
+                {t('notifications.qadaQuestion')}
               </Text>
               <TextInput
                 keyboardType="number-pad"
@@ -91,7 +91,7 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
                 )}
               />
               <View className="mt-5 gap-3">
-                <Button title={t('notifications.submit')} onPress={handleQadhaSubmit} />
+                <Button title={t('notifications.submit')} onPress={handleQadaSubmit} />
                 <Button title={t('notifications.skip')} variant="secondary" onPress={onClose} />
               </View>
             </>

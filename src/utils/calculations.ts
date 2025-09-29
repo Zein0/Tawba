@@ -15,22 +15,24 @@ export const summarizePrayers = (
   return PRAYER_ORDER.map((prayer) => {
     const estimate = estimates.find((e) => e.prayer === prayer);
     const initialCount = estimate?.initialCount ?? 0;
-    const totalQadhaPrayed = logs
-      .filter((log) => log.prayer === prayer && log.type === 'qadha')
+    const totalQadaPrayed = logs
+      .filter((log) => log.prayer === prayer && log.type === 'qada')
       .reduce((sum, log) => sum + log.count, 0);
     const totalCurrent = logs.filter((log) => log.prayer === prayer && log.type === 'current').length;
     const daysSinceStart = startDate
       ? dayjs().startOf('day').diff(dayjs(startDate).startOf('day'), 'day')
       : 0;
     const missedSinceStart = Math.max(daysSinceStart - totalCurrent, 0);
-    const remaining = Math.max(initialCount + missedSinceStart - totalQadhaPrayed, 0);
+    const missedTotal = initialCount + missedSinceStart;
+    const remaining = Math.max(missedTotal - totalQadaPrayed, 0);
 
     return {
       prayer,
       initialCount,
-      totalQadhaPrayed,
+      totalQadaPrayed,
       totalCurrentPrayed: totalCurrent,
-      remaining
+      remaining,
+      missedTotal
     };
   });
 };
@@ -39,9 +41,9 @@ export const totalRemaining = (summaries: PrayerSummary[]) => {
   return summaries.reduce((sum, prayer) => sum + prayer.remaining, 0);
 };
 
-export const totalQadhaPrayed = (logs: PrayerLog[]) => {
+export const totalQadaPrayed = (logs: PrayerLog[]) => {
   return logs
-    .filter((log) => log.type === 'qadha')
+    .filter((log) => log.type === 'qada')
     .reduce((sum, log) => sum + log.count, 0);
 };
 
@@ -50,16 +52,16 @@ export const buildProjection = (
   logs: PrayerLog[],
   startDate: string | null
 ): ProgressProjection => {
-  const qadhaLogs = logs.filter((log) => log.type === 'qadha');
-  if (!startDate || qadhaLogs.length === 0) {
+  const qadaLogs = logs.filter((log) => log.type === 'qada');
+  if (!startDate || qadaLogs.length === 0) {
     return { dailyAverage: 0, projectedCompletionDate: null };
   }
 
   const start = dayjs(startDate).startOf('day');
   const today = dayjs().startOf('day');
   const days = Math.max(today.diff(start, 'day') + 1, 1);
-  const totalQadha = qadhaLogs.reduce((sum, log) => sum + log.count, 0);
-  const average = totalQadha / days;
+  const totalQada = qadaLogs.reduce((sum, log) => sum + log.count, 0);
+  const average = totalQada / days;
   const remaining = totalRemaining(summaries);
   if (average <= 0) {
     return { dailyAverage: 0, projectedCompletionDate: null };

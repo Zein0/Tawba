@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import clsx from 'clsx';
@@ -13,6 +12,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { calculateInitialEstimate, todayISO } from '@/utils/calculations';
 import { PrayerName } from '@/types';
 import { useRouter } from 'expo-router';
+import { Picker } from '@react-native-picker/picker';
 
 type DurationUnit = 'days' | 'months' | 'years';
 
@@ -207,32 +207,49 @@ const OnboardingScreen: React.FC = () => {
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <Card>
-          <View className="mb-6 rounded-3xl border border-olive/20 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-            <Text className="text-xs uppercase tracking-[2px] text-olive/70 dark:text-white/60">
-              {t('onboarding.languagePrompt')}
-            </Text>
             <View
               className={clsx(
-                'mt-3 overflow-hidden rounded-2xl border',
-                isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
+                'flex-row rounded-full border px-1 py-1 w-[fit-content] mb-2 self-end',
+                isDark ? 'border-white/15 bg-white/10' : 'border-olive/20 bg-white/80'
               )}
             >
-              <Picker
-                selectedValue={settings?.language ?? i18n.language}
-                onValueChange={(value) => handleLanguageSelect(value as 'en' | 'ar')}
-              >
-                {languageOptions.map((option) => (
-                  <Picker.Item key={option.code} label={option.label} value={option.code} />
-                ))}
-              </Picker>
+              {languageOptions.map((option) => {
+                const active = (settings?.language ?? i18n.language) === option.code;
+                return (
+                  <Pressable
+                    key={option.code}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    onPress={() => handleLanguageSelect(option.code)}
+                    className={clsx(
+                      'rounded-full px-3 py-1.5 w-max',
+                      active ? (isDark ? 'bg-teal' : 'bg-olive') : 'bg-transparent'
+                    )}
+                  >
+                    <Text
+                      className={clsx(
+                        'text-xs font-semibold uppercase tracking-wide',
+                        active ? 'text-white' : isDark ? 'text-white/70' : 'text-olive/70'
+                      )}
+                    >
+                      {option.code.toUpperCase()}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          <View className="mb-6 flex-row items-start justify-between">
+            <View className="flex-1 pr-4">
+              <Heading className="text-3xl">{t('onboarding.title')}</Heading>
+              <Body className="mt-2 text-olive/70 dark:text-white/70">{t('onboarding.subtitle')}</Body>
             </View>
           </View>
 
-          <View className="mb-4">
-            <Text className="text-xs uppercase tracking-[2px] text-olive/70 dark:text-white/60">
+          <View className="mb-6 flex-row items-center justify-between gap-4">
+            <Text className="text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60">
               {t('onboarding.stepLabel', { current: stepIndex, total: totalSteps })}
             </Text>
-            <View className="mt-3 flex-row gap-2">
+            <View className="flex-1 flex-row gap-1.5">
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <View
                   key={index}
@@ -245,50 +262,61 @@ const OnboardingScreen: React.FC = () => {
             </View>
           </View>
 
-          <Heading className="mb-2 text-3xl">{t('onboarding.title')}</Heading>
-          <Body className="mb-6">{t('onboarding.subtitle')}</Body>
-
           {step === 'duration' ? (
             <>
-              <Text className="mb-2 text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
-                {t('onboarding.durationLabel')}
-              </Text>
-              <View className="mb-4 rounded-3xl border border-olive/20 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-                <TextInput
-                  keyboardType="decimal-pad"
-                  value={durationValue}
-                  onChangeText={setDurationValue}
-                  placeholder="0"
-                  placeholderTextColor={isDark ? '#6b7280' : '#94a3b8'}
-                  className={clsx(
-                    'rounded-2xl border border-olive/30 px-4 py-3 text-lg text-teal',
-                    isDark && 'border-white/20 text-white bg-transparent'
-                  )}
-                />
-                <Body className="mt-3">{t('onboarding.durationHint')}</Body>
-                <View
-                  className={clsx(
-                    'mt-4 overflow-hidden rounded-2xl border',
-                    isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
-                  )}
-                >
-                  <Picker
-                    selectedValue={durationUnit}
-                    onValueChange={(value) => setDurationUnit(value as DurationUnit)}
+              <View className="mb-5 rounded-3xl border border-olive/20 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10">
+                <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+                  {t('onboarding.durationLabel')}
+                </Text>
+                <View className="mt-3 flex-row items-center gap-3">
+                  <TextInput
+                    keyboardType="decimal-pad"
+                    value={durationValue}
+                    onChangeText={setDurationValue}
+                    placeholder="0"
+                    placeholderTextColor={isDark ? '#6b7280' : '#94a3b8'}
+                    className={clsx(
+                      'flex-0 rounded-2xl border border-olive/30 px-4 py-3 text-lg font-semibold text-teal',
+                      isDark && 'border-white/20 bg-transparent text-white'
+                    )}
+                  />
+                  <View
+                    className={clsx(
+                      'flex-1 rounded-2xl border border-olive/30',
+                      isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
+                    )}
                   >
-                    {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => (
-                      <Picker.Item
-                        key={unit}
-                        label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
-                        value={unit}
-                      />
-                    ))}
-                  </Picker>
+                    <Picker
+                      selectedValue={durationUnit}
+                      onValueChange={(value) => setDurationUnit(value as DurationUnit)}
+                      style={{
+                        height: 50,
+                        color: isDark ? 'text-white' : 'text-olive',
+                      }}
+                      itemStyle={{
+                        color: isDark ? 'text-white' : 'text-olive',
+                        fontSize: 16,
+                        fontWeight: '600'
+                      }}
+                    >
+                      {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => (
+                        <Picker.Item
+                          key={unit}
+                          label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
+                          value={unit}
+                          color={isDark ? 'text-white/70' : 'text-olive/80'}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
                 </View>
+                <Body className="mt-3 text-sm text-olive/70 dark:text-white/60">
+                  {t('onboarding.durationHint')}
+                </Body>
               </View>
 
-              <View className="mb-8 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10">
-                <Text className="text-sm font-medium text-teal dark:text-white">
+              <View className="mb-6 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10">
+                <Text className="text-sm font-medium text-olive dark:text-white">
                   {t('onboarding.calculate', { total: totalEstimate.toLocaleString() })}
                 </Text>
               </View>
@@ -297,14 +325,14 @@ const OnboardingScreen: React.FC = () => {
             </>
           ) : (
             <>
-              <Body className="mb-4">{t('onboarding.adjust')}</Body>
+              <Body className="mb-4 text-olive/70 dark:text-white/70">{t('onboarding.adjust')}</Body>
 
               {PRAYER_ORDER.map((prayer) => (
                 <View
                   key={prayer}
-                  className="mb-3 rounded-3xl border border-olive/20 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5"
+                  className="mb-3 flex-row items-center justify-between rounded-3xl border border-olive/20 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-white/5"
                 >
-                  <Text className="mb-2 text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+                  <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
                     {t(`prayers.${prayer}`)}
                   </Text>
                   <TextInput
@@ -312,45 +340,37 @@ const OnboardingScreen: React.FC = () => {
                     value={counts[prayer]}
                     onChangeText={(value) => handleCountChange(prayer, value)}
                     className={clsx(
-                      'rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                      isDark && 'border-white/20 text-white bg-transparent'
+                      'ml-3 w-20 rounded-2xl border border-olive/30 px-3 py-2 text-right text-teal',
+                      isDark && 'border-white/20 bg-transparent text-white'
                     )}
                   />
                 </View>
               ))}
 
-              <View className="mt-2 rounded-3xl border border-olive/20 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-                <Text className="mb-2 text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
-                  {t('onboarding.locationReady')}
-                </Text>
-                <View className="flex-row items-center gap-3">
-                  <View className="flex-1">
-                    <Text
-                      className={clsx(
-                        'text-base',
-                        locationError
-                          ? 'text-rose-500'
-                          : isDark
-                          ? 'text-white'
-                          : 'text-teal'
-                      )}
-                    >
-                      {currentLocationText}
-                    </Text>
-                    {!locationError && (
-                      <Body className="mt-2 text-olive/70">
-                        {t('onboarding.locationPermission')}
-                      </Body>
-                    )}
-                  </View>
+              <View className="mt-2 rounded-3xl border border-olive/20 bg-white/70 px-4 py-4 dark:border-white/10 dark:bg-white/5">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+                    {t('onboarding.locationReady')}
+                  </Text>
                   {(loadingLocation || resolvingAddress) && (
-                    <ActivityIndicator color={isDark ? '#fff' : '#0f766e'} />
+                    <ActivityIndicator size="small" color={isDark ? '#ffffff' : '#0f766e'} />
                   )}
                 </View>
-                <View className="mt-4">
+                <Text
+                  className={clsx(
+                    'mt-3 text-sm',
+                    locationError ? 'text-rose-500' : isDark ? 'text-white' : 'text-teal'
+                  )}
+                  numberOfLines={2}
+                >
+                  {currentLocationText}
+                </Text>
+                <View className="mt-4 flex-row justify-end">
                   <Button
                     title={loadingLocation ? '…' : t('settings.updateLocation')}
                     variant="secondary"
+                    size="compact"
+                    fullWidth={false}
                     onPress={requestLocation}
                   />
                 </View>
@@ -358,9 +378,9 @@ const OnboardingScreen: React.FC = () => {
 
               <View className="mt-6 space-y-3">
                 <Button title={t('onboarding.continue')} onPress={handleContinue} />
-                <Button title={t('forms.back')} variant="secondary" onPress={handleBack} />
+                <Button style={{ marginTop: 12 }} title={t('forms.back')} variant="secondary" onPress={handleBack} />
                 {hasAdjusted && (
-                  <Button title={t('onboarding.reset')} variant="secondary" onPress={resetAdjustments} />
+                  <Button style={{ marginTop: 12 }} title={t('onboarding.reset')} variant="secondary" onPress={resetAdjustments} />
                 )}
               </View>
             </>

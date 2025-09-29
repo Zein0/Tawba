@@ -1,13 +1,13 @@
 # Tawba – Missed Prayer Tracker
 
-An Expo (React Native) mobile app that helps Muslims estimate, track, and repay missed (qadha) prayers entirely offline. The experience is gentle, ad-free, and bilingual (Arabic/English) with RTL support.
+An Expo (React Native) mobile app that helps Muslims estimate, track, and repay missed (qada) prayers entirely offline. The experience is gentle, ad-free, and bilingual (Arabic/English) with RTL support.
 
 ## Features
 
 - **Onboarding estimator** – calculate missed prayers by years and fine-tune per prayer type.
 - **Offline prayer reminders** – compute local adhan times with `adhan.js` and send gentle notifications 10 minutes after each prayer.
-- **Smart logging** – capture current and qadha prayers, edit or delete entries, and view your day-by-day history.
-- **Progress insights** – monitor remaining debt per prayer, see total qadha repaid, and get a projected completion date based on your pace.
+- **Smart logging** – capture current and qada prayers, edit or delete entries, and view your day-by-day history.
+- **Progress insights** – monitor remaining debt per prayer, see total qada repaid, and get a projected completion date based on your pace.
 - **Personalised settings** – toggle language (Arabic/English with RTL), font size, theme, reminders, and saved location.
 
 ## Tech Stack
