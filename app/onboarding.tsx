@@ -289,7 +289,7 @@ const OnboardingScreen: React.FC = () => {
 
               <View className="mb-8 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10">
                 <Text className="text-sm font-medium text-teal dark:text-white">
-                  {t('onboarding.calculate', { count: totalEstimate.toLocaleString() })}
+                  {t('onboarding.calculate', { total: totalEstimate.toLocaleString() })}
                 </Text>
               </View>
 

@@ -16,7 +16,7 @@ export const resources = {
         unitDays: 'Days',
         unitMonths: 'Months',
         unitYears: 'Years',
-        calculate: 'That is roughly {{count}} prayers.',
+        calculate: 'That is roughly {{total}} prayers.',
         next: 'Next',
         adjust: 'Fine-tune each prayer below if you know specific counts.',
         continue: 'Save and continue',
@@ -54,6 +54,9 @@ export const resources = {
         totalForDay_plural: '{{count}} logs',
         badgeCurrent: 'On time',
         badgeQadha: 'Qadha',
+        filterLabel: 'Show',
+        filterAll: 'All days',
+        filterHint: 'Tap a date to focus on its logs.',
         countLabel: 'Number of prayers',
         prayerLabel: 'Prayer',
         typeLabel: 'Type',
@@ -68,17 +71,30 @@ export const resources = {
       },
       progress: {
         title: 'Progress',
-        repaid: '{{count}} repaid of {{total}}',
+        repaid: '{{completed}} repaid of {{total}}',
         filterTitle: 'Projection planner',
         filterSubtitle: 'Focus on a specific prayer and pace yourself with a daily target.',
         focusLabel: 'Prayer focus',
         allPrayers: 'All prayers',
         perDayLabel: 'Qadha per day',
+        perDayLabelAll: 'Qadha per prayer per day',
         perDayHint: 'Choose how many qadha prayers you can complete daily.',
-        remainingLabel: '{{count}} remaining',
+        perDayHintAll:
+          'When you select all prayers, this target applies to every prayer. For example, 5 means 5 Fajr, 5 Dhuhr, and so on each day.',
+        remainingLabel: '{{remaining}} remaining',
         clearMessage: 'You are all caught up for this selection. Keep going!',
         projected: 'At {{average}} per day you will be debt-free by {{date}}',
-        projectedUnknown: 'Start logging qadha prayers to see a projection.'
+        projectedDetailed:
+          'At {{average}} per day you will be debt-free in about {{count}} day (by {{date}})',
+        projectedDetailed_plural:
+          'At {{average}} per day you will be debt-free in about {{count}} days (by {{date}})',
+        projectedDetailedAll:
+          'Keeping {{average}} per prayer each day clears everything in about {{count}} day (by {{date}})',
+        projectedDetailedAll_plural:
+          'Keeping {{average}} per prayer each day clears everything in about {{count}} days (by {{date}})',
+        projectedUnknown: 'Start logging qadha prayers to see a projection.',
+        allSelectionNotice:
+          'We calculate the finish line by checking each prayer separately and using the longest timeline.'
       },
       settings: {
         title: 'Settings',
@@ -162,7 +178,7 @@ export const resources = {
         unitDays: 'أيام',
         unitMonths: 'أشهر',
         unitYears: 'سنوات',
-        calculate: 'يعادل تقريباً {{count}} صلاة.',
+        calculate: 'يعادل تقريباً {{total}} صلاة.',
         next: 'التالي',
         adjust: 'يمكنك تعديل عدد كل صلاة إذا كنت تعرف الأعداد الدقيقة.',
         continue: 'حفظ ومتابعة',
@@ -200,6 +216,9 @@ export const resources = {
         totalForDay_plural: '{{count}} سجلات',
         badgeCurrent: 'في وقتها',
         badgeQadha: 'قضاء',
+        filterLabel: 'عرض',
+        filterAll: 'كل الأيام',
+        filterHint: 'اختر تاريخاً لعرض سجلات ذلك اليوم فقط.',
         countLabel: 'عدد الصلوات',
         prayerLabel: 'الصلاة',
         typeLabel: 'النوع',
@@ -214,17 +233,29 @@ export const resources = {
       },
       progress: {
         title: 'التقدم',
-        repaid: 'تم قضاء {{count}} من أصل {{total}}',
+        repaid: 'تم قضاء {{completed}} من أصل {{total}}',
         filterTitle: 'مخطط التوقع',
         filterSubtitle: 'ركّز على صلاة محددة وحدد هدف القضاء اليومي.',
         focusLabel: 'الصلاة المركّز عليها',
         allPrayers: 'جميع الصلوات',
         perDayLabel: 'عدد صلوات القضاء يومياً',
+        perDayLabelAll: 'عدد صلوات القضاء لكل صلاة يومياً',
         perDayHint: 'اختر عدد صلوات القضاء التي يمكنك أداؤها كل يوم.',
-        remainingLabel: '{{count}} متبقية',
+        perDayHintAll:
+          'عند اختيار جميع الصلوات، يُطبق هذا الهدف على كل صلاة على حدة. مثلاً، 5 يعني 5 للفجر و5 للظهر وهكذا يومياً.',
+        remainingLabel: '{{remaining}} متبقية',
         clearMessage: 'لقد أنهيت هذه الفئة بالفعل، استمر بهذا العزم!',
         projected: 'إذا قضيت {{average}} يومياً فستنتهي في {{date}}',
-        projectedUnknown: 'ابدأ بتسجيل صلوات القضاء لرؤية التوقع.'
+        projectedDetailed:
+          'عند قضاء {{average}} يومياً ستنتهي خلال نحو {{count}} يوم (بحلول {{date}})',
+        projectedDetailed_plural:
+          'عند قضاء {{average}} يومياً ستنتهي خلال نحو {{count}} أيام (بحلول {{date}})',
+        projectedDetailedAll:
+          'بالمحافظة على {{average}} لكل صلاة يومياً ستنتهي خلال نحو {{count}} يوم (بحلول {{date}})',
+        projectedDetailedAll_plural:
+          'بالمحافظة على {{average}} لكل صلاة يومياً ستنتهي خلال نحو {{count}} أيام (بحلول {{date}})',
+        projectedUnknown: 'ابدأ بتسجيل صلوات القضاء لرؤية التوقع.',
+        allSelectionNotice: 'نحسب تاريخ الاكتمال بأخذ كل صلاة على حدة واختيار أبعد موعد بينها.'
       },
       settings: {
         title: 'الإعدادات',
