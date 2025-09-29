@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import clsx from 'clsx';
@@ -210,33 +211,20 @@ const OnboardingScreen: React.FC = () => {
             <Text className="text-xs uppercase tracking-[2px] text-olive/70 dark:text-white/60">
               {t('onboarding.languagePrompt')}
             </Text>
-            <View className="mt-3 flex-row gap-3">
-              {languageOptions.map((option) => {
-                const isActive = settings?.language === option.code;
-                return (
-                  <Pressable
-                    key={option.code}
-                    onPress={() => handleLanguageSelect(option.code)}
-                    className={clsx(
-                      'flex-1 rounded-2xl px-4 py-3 items-center justify-center border',
-                      isActive
-                        ? 'border-teal bg-teal'
-                        : isDark
-                        ? 'border-white/20 bg-transparent'
-                        : 'border-olive/30 bg-transparent'
-                    )}
-                  >
-                    <Text
-                      className={clsx(
-                        'font-semibold text-sm',
-                        isActive ? 'text-white' : isDark ? 'text-white/80' : 'text-teal'
-                      )}
-                    >
-                      {option.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+            <View
+              className={clsx(
+                'mt-3 overflow-hidden rounded-2xl border',
+                isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
+              )}
+            >
+              <Picker
+                selectedValue={settings?.language ?? i18n.language}
+                onValueChange={(value) => handleLanguageSelect(value as 'en' | 'ar')}
+              >
+                {languageOptions.map((option) => (
+                  <Picker.Item key={option.code} label={option.label} value={option.code} />
+                ))}
+              </Picker>
             </View>
           </View>
 
@@ -278,33 +266,24 @@ const OnboardingScreen: React.FC = () => {
                   )}
                 />
                 <Body className="mt-3">{t('onboarding.durationHint')}</Body>
-                <View className="mt-4 flex-row gap-3">
-                  {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => {
-                    const active = durationUnit === unit;
-                    return (
-                      <Pressable
+                <View
+                  className={clsx(
+                    'mt-4 overflow-hidden rounded-2xl border',
+                    isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
+                  )}
+                >
+                  <Picker
+                    selectedValue={durationUnit}
+                    onValueChange={(value) => setDurationUnit(value as DurationUnit)}
+                  >
+                    {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => (
+                      <Picker.Item
                         key={unit}
-                        onPress={() => setDurationUnit(unit)}
-                        className={clsx(
-                          'flex-1 rounded-2xl border px-4 py-3 items-center justify-center',
-                          active
-                            ? 'border-teal bg-teal'
-                            : isDark
-                            ? 'border-white/20 bg-transparent'
-                            : 'border-olive/30 bg-transparent'
-                        )}
-                      >
-                        <Text
-                          className={clsx(
-                            'font-semibold text-sm',
-                            active ? 'text-white' : isDark ? 'text-white/80' : 'text-teal'
-                          )}
-                        >
-                          {t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
+                        label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
+                        value={unit}
+                      />
+                    ))}
+                  </Picker>
                 </View>
               </View>
 
