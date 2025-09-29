@@ -18,8 +18,8 @@ const PRAYER_ICONS: Record<PrayerName, keyof typeof Ionicons.glyphMap> = {
   fajr: 'cloudy-night-outline',
   dhuhr: 'sunny-outline',
   asr: 'partly-sunny-outline',
-  maghrib: 'sunset-outline',
-  isha: 'moon-outline'
+  maghrib: 'moon-outline',
+  isha: 'moon-sharp'
 };
 
 const PrayerTimesScreen: React.FC = () => {

@@ -147,7 +147,7 @@ const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
-        <View className="mb-6">
+        {/* <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.theme')}</Body>
           <View className="flex-row gap-3">
             {(['light', 'dark', 'system'] as const).map((theme) => (
@@ -160,7 +160,7 @@ const SettingsScreen: React.FC = () => {
               </View>
             ))}
           </View>
-        </View>
+        </View> */}
 
         <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.reminders')}</Body>

@@ -218,7 +218,7 @@ const LogsScreen: React.FC = () => {
                       : 'bg-emerald-500/10'
                     : isDark
                     ? 'bg-amber-500/20'
-                    : 'bg-amber-500/15';
+                    : 'bg-amber-500/10';
                 const badgeText =
                   log.type === 'current'
                     ? isDark
@@ -244,14 +244,9 @@ const LogsScreen: React.FC = () => {
                     </View>
                     <View className="mt-2 flex-row items-center justify-between">
                       <View className="flex-row items-center gap-2">
-                        <Body className="text-sm text-olive/80 dark:text-white/70">
-                          {log.type === 'current'
-                            ? t('logs.typeCurrent')
-                            : `${t('logs.typeQada')} · ${log.count}`}
-                        </Body>
                         <View className={clsx('rounded-full px-3 py-1', badgeBackground)}>
                           <Text className={clsx('text-xs font-semibold uppercase tracking-wide', badgeText)}>
-                            {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qada'}`)}
+                            {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qada'}`)} · {log.count}
                           </Text>
                         </View>
                       </View>
