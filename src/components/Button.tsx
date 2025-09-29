@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, ViewStyle } from 'react-native';
 import clsx from 'clsx';
 import { useAppContext } from '@/contexts/AppContext';
 
@@ -11,6 +11,8 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary';
   size?: ButtonSize;
   fullWidth?: boolean;
+  style?: ViewStyle;
+  className?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,7 +20,9 @@ export const Button: React.FC<ButtonProps> = ({
   onPress,
   variant = 'primary',
   size = 'default',
-  fullWidth = true
+  fullWidth = true,
+  style,
+  className
 }) => {
   const { settings } = useAppContext();
   const isDark = settings?.theme === 'dark';
@@ -33,7 +37,8 @@ export const Button: React.FC<ButtonProps> = ({
         : 'bg-olive'
       : isDark
       ? 'bg-dusk border border-teal'
-      : 'bg-sand border border-olive/40'
+      : 'bg-sand border border-olive/40',
+    className
   );
 
   const textSizeClass = (() => {
@@ -59,7 +64,7 @@ export const Button: React.FC<ButtonProps> = ({
   })();
 
   return (
-    <Pressable onPress={onPress} className={containerClasses}>
+    <Pressable onPress={onPress} className={containerClasses} style={style}>
       <Text
         className={clsx(
           'font-semibold',

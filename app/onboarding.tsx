@@ -12,6 +12,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { calculateInitialEstimate, todayISO } from '@/utils/calculations';
 import { PrayerName } from '@/types';
 import { useRouter } from 'expo-router';
+import { Picker } from '@react-native-picker/picker';
 
 type DurationUnit = 'days' | 'months' | 'years';
 
@@ -206,14 +207,9 @@ const OnboardingScreen: React.FC = () => {
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <Card>
-          <View className="mb-6 flex-row items-start justify-between">
-            <View className="flex-1 pr-4">
-              <Heading className="text-3xl">{t('onboarding.title')}</Heading>
-              <Body className="mt-2 text-olive/70 dark:text-white/70">{t('onboarding.subtitle')}</Body>
-            </View>
             <View
               className={clsx(
-                'flex-row rounded-full border px-1 py-1',
+                'flex-row rounded-full border px-1 py-1 w-[fit-content] mb-2 self-end',
                 isDark ? 'border-white/15 bg-white/10' : 'border-olive/20 bg-white/80'
               )}
             >
@@ -226,7 +222,7 @@ const OnboardingScreen: React.FC = () => {
                     accessibilityState={{ selected: active }}
                     onPress={() => handleLanguageSelect(option.code)}
                     className={clsx(
-                      'rounded-full px-3 py-1.5',
+                      'rounded-full px-3 py-1.5 w-max',
                       active ? (isDark ? 'bg-teal' : 'bg-olive') : 'bg-transparent'
                     )}
                   >
@@ -241,6 +237,11 @@ const OnboardingScreen: React.FC = () => {
                   </Pressable>
                 );
               })}
+            </View>
+          <View className="mb-6 flex-row items-start justify-between">
+            <View className="flex-1 pr-4">
+              <Heading className="text-3xl">{t('onboarding.title')}</Heading>
+              <Body className="mt-2 text-olive/70 dark:text-white/70">{t('onboarding.subtitle')}</Body>
             </View>
           </View>
 
@@ -275,40 +276,38 @@ const OnboardingScreen: React.FC = () => {
                     placeholder="0"
                     placeholderTextColor={isDark ? '#6b7280' : '#94a3b8'}
                     className={clsx(
-                      'flex-1 rounded-2xl border border-olive/30 px-4 py-3 text-lg font-semibold text-teal',
+                      'flex-0 rounded-2xl border border-olive/30 px-4 py-3 text-lg font-semibold text-teal',
                       isDark && 'border-white/20 bg-transparent text-white'
                     )}
                   />
                   <View
                     className={clsx(
-                      'flex-1 flex-row rounded-full border px-1 py-1',
+                      'flex-1 rounded-2xl border border-olive/30',
                       isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
                     )}
                   >
-                    {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => {
-                      const active = durationUnit === unit;
-                      return (
-                        <Pressable
+                    <Picker
+                      selectedValue={durationUnit}
+                      onValueChange={(value) => setDurationUnit(value as DurationUnit)}
+                      style={{
+                        height: 50,
+                        color: isDark ? 'text-white' : 'text-olive',
+                      }}
+                      itemStyle={{
+                        color: isDark ? 'text-white' : 'text-olive',
+                        fontSize: 16,
+                        fontWeight: '600'
+                      }}
+                    >
+                      {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => (
+                        <Picker.Item
                           key={unit}
-                          accessibilityRole="button"
-                          accessibilityState={{ selected: active }}
-                          onPress={() => setDurationUnit(unit)}
-                          className={clsx(
-                            'flex-1 rounded-full px-3 py-2',
-                            active ? (isDark ? 'bg-teal' : 'bg-olive') : 'bg-transparent'
-                          )}
-                        >
-                          <Text
-                            className={clsx(
-                              'text-center text-xs font-semibold uppercase tracking-wide',
-                              active ? 'text-white' : isDark ? 'text-white/70' : 'text-olive/80'
-                            )}
-                          >
-                            {t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
+                          label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
+                          value={unit}
+                          color={isDark ? 'text-white/70' : 'text-olive/80'}
+                        />
+                      ))}
+                    </Picker>
                   </View>
                 </View>
                 <Body className="mt-3 text-sm text-olive/70 dark:text-white/60">
@@ -379,9 +378,9 @@ const OnboardingScreen: React.FC = () => {
 
               <View className="mt-6 space-y-3">
                 <Button title={t('onboarding.continue')} onPress={handleContinue} />
-                <Button title={t('forms.back')} variant="secondary" onPress={handleBack} />
+                <Button style={{ marginTop: 12 }} title={t('forms.back')} variant="secondary" onPress={handleBack} />
                 {hasAdjusted && (
-                  <Button title={t('onboarding.reset')} variant="secondary" onPress={resetAdjustments} />
+                  <Button style={{ marginTop: 12 }} title={t('onboarding.reset')} variant="secondary" onPress={resetAdjustments} />
                 )}
               </View>
             </>

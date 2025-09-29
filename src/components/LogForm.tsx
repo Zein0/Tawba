@@ -168,7 +168,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                     <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                       {t('logs.typeLabel')}
                     </Text>
-                    <View className="flex-row gap-3">
+                    <View className="flex-row gap-2">
                       {(['current', 'qada'] as PrayerType[]).map((option) => {
                         const active = type === option;
                         return (
@@ -275,7 +275,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                   </View>
                 </View>
 
-                <View className="mt-6 flex-row gap-2">
+                <View style={{ marginTop: 12 }} className="flex-row gap-2">
                   <View className="flex-1">
                     <Button
                       title={t('forms.cancel')}

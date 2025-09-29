@@ -17,18 +17,9 @@ const ProgressScreen: React.FC = () => {
   const [selectedPrayer, setSelectedPrayer] = useState<'all' | PrayerName>('all');
   const [userEditedTarget, setUserEditedTarget] = useState(false);
   const [dailyTarget, setDailyTarget] = useState(() =>
-    projection.dailyAverage > 0 ? Math.max(1, Math.round(projection.dailyAverage)).toString() : '2'
+    '2'
   );
 
-  useEffect(() => {
-    if (!userEditedTarget) {
-      if (projection.dailyAverage > 0) {
-        setDailyTarget(Math.max(1, Math.round(projection.dailyAverage)).toString());
-      } else {
-        setDailyTarget('2');
-      }
-    }
-  }, [projection.dailyAverage, userEditedTarget]);
 
   const remainingForSelection = useMemo(() => {
     if (selectedPrayer === 'all') {
@@ -121,7 +112,6 @@ const ProgressScreen: React.FC = () => {
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {([
-                { value: 'all', label: t('progress.allPrayers') },
                 ...summaries.map((summary) => ({
                   value: summary.prayer,
                   label: t(`prayers.${summary.prayer}`)
