@@ -45,13 +45,38 @@ const ProgressScreen: React.FC = () => {
     return Number.isFinite(parsed) ? parsed : 0;
   }, [dailyTarget]);
 
-  const projectedDate = useMemo(() => {
-    if (dailyTargetNumber <= 0 || remainingForSelection <= 0) {
+  const daysToClear = useMemo(() => {
+    if (dailyTargetNumber <= 0) {
       return null;
     }
-    const daysToClear = Math.ceil(remainingForSelection / dailyTargetNumber);
+
+    if (selectedPrayer === 'all') {
+      if (summaries.length === 0) {
+        return 0;
+      }
+      const perPrayerDays = summaries.map((summary) =>
+        summary.remaining > 0 ? Math.ceil(summary.remaining / dailyTargetNumber) : 0
+      );
+      const maxDays = Math.max(...perPrayerDays);
+      return Number.isFinite(maxDays) ? maxDays : null;
+    }
+
+    const summary = summaries.find((item) => item.prayer === selectedPrayer);
+    if (!summary) {
+      return null;
+    }
+    if (summary.remaining <= 0) {
+      return 0;
+    }
+    return Math.ceil(summary.remaining / dailyTargetNumber);
+  }, [dailyTargetNumber, selectedPrayer, summaries]);
+
+  const projectedDate = useMemo(() => {
+    if (!daysToClear || daysToClear <= 0) {
+      return null;
+    }
     return dayjs().startOf('day').add(daysToClear, 'day');
-  }, [dailyTargetNumber, remainingForSelection]);
+  }, [daysToClear]);
 
   return (
     <ScreenContainer>
@@ -67,7 +92,7 @@ const ProgressScreen: React.FC = () => {
                   <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
                   <Body>
                     {t('progress.repaid', {
-                      count: summary.totalQadhaPrayed.toLocaleString(),
+                      completed: summary.totalQadhaPrayed.toLocaleString(),
                       total: total.toLocaleString()
                     })}
                   </Body>
@@ -115,7 +140,7 @@ const ProgressScreen: React.FC = () => {
 
           <View className="mb-5">
             <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
-              {t('progress.perDayLabel')}
+              {selectedPrayer === 'all' ? t('progress.perDayLabelAll') : t('progress.perDayLabel')}
             </Text>
             <TextInput
               value={dailyTarget}
@@ -126,20 +151,34 @@ const ProgressScreen: React.FC = () => {
               placeholderTextColor="#a3ad9d"
               className="rounded-2xl border border-olive/20 px-4 py-3 text-base text-teal"
             />
-            <Body className="mt-2 text-olive/70">{t('progress.perDayHint')}</Body>
+            <Body className="mt-2 text-olive/70">
+              {selectedPrayer === 'all' ? t('progress.perDayHintAll') : t('progress.perDayHint')}
+            </Body>
           </View>
 
           <View className="rounded-2xl bg-olive/10 px-4 py-4">
             <Body className="mb-1 font-semibold text-olive">
-              {t('progress.remainingLabel', { count: remainingForSelection.toLocaleString() })}
+              {t('progress.remainingLabel', { remaining: remainingForSelection.toLocaleString() })}
             </Body>
             {projectedDate ? (
-              <Body>
-                {t('progress.projected', {
-                  average: dailyTargetNumber,
-                  date: projectedDate.format('MMM D, YYYY')
-                })}
-              </Body>
+              <View className="gap-2">
+                <Body>
+                  {selectedPrayer === 'all'
+                    ? t('progress.projectedDetailedAll', {
+                        average: dailyTargetNumber,
+                        date: projectedDate.format('MMM D, YYYY'),
+                        count: daysToClear ?? 0
+                      })
+                    : t('progress.projectedDetailed', {
+                        average: dailyTargetNumber,
+                        date: projectedDate.format('MMM D, YYYY'),
+                        count: daysToClear ?? 0
+                      })}
+                </Body>
+                {selectedPrayer === 'all' && (
+                  <Body className="text-sm text-olive/70">{t('progress.allSelectionNotice')}</Body>
+                )}
+              </View>
             ) : remainingForSelection === 0 ? (
               <Body>{t('progress.clearMessage')}</Body>
             ) : (

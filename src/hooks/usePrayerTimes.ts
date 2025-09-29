@@ -167,8 +167,27 @@ export const usePrayerTimes = () => {
 
   const nextPrayer = useMemo(() => {
     const now = dayjs();
-    return prayerTimes.find((pt) => dayjs(pt.time).isAfter(now));
-  }, [prayerTimes]);
+    const upcomingToday = prayerTimes.find((pt) => dayjs(pt.time).isAfter(now));
+    if (upcomingToday) {
+      return upcomingToday;
+    }
+
+    if (prayerTimes.length === 0) {
+      return null;
+    }
+
+    if (!settings?.location) {
+      const firstPrayer = prayerTimes[0];
+      return {
+        ...firstPrayer,
+        time: dayjs(firstPrayer.time).add(1, 'day').toDate()
+      };
+    }
+
+    const tomorrow = dayjs().add(1, 'day').toDate();
+    const tomorrowTimes = computePrayerTimes(tomorrow, settings.location);
+    return tomorrowTimes[0] ?? null;
+  }, [prayerTimes, settings?.location]);
 
   return {
     prayerTimes,
