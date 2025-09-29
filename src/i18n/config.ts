@@ -64,6 +64,14 @@ export const resources = {
       progress: {
         title: 'Progress',
         repaid: '{{count}} repaid of {{total}}',
+        filterTitle: 'Projection planner',
+        filterSubtitle: 'Focus on a specific prayer and pace yourself with a daily target.',
+        focusLabel: 'Prayer focus',
+        allPrayers: 'All prayers',
+        perDayLabel: 'Qadha per day',
+        perDayHint: 'Choose how many qadha prayers you can complete daily.',
+        remainingLabel: '{{count}} remaining',
+        clearMessage: 'You are all caught up for this selection. Keep going!',
         projected: 'At {{average}} per day you will be debt-free by {{date}}',
         projectedUnknown: 'Start logging qadha prayers to see a projection.'
       },
@@ -197,6 +205,14 @@ export const resources = {
       progress: {
         title: 'التقدم',
         repaid: 'تم قضاء {{count}} من أصل {{total}}',
+        filterTitle: 'مخطط التوقع',
+        filterSubtitle: 'ركّز على صلاة محددة وحدد هدف القضاء اليومي.',
+        focusLabel: 'الصلاة المركّز عليها',
+        allPrayers: 'جميع الصلوات',
+        perDayLabel: 'عدد صلوات القضاء يومياً',
+        perDayHint: 'اختر عدد صلوات القضاء التي يمكنك أداؤها كل يوم.',
+        remainingLabel: '{{count}} متبقية',
+        clearMessage: 'لقد أنهيت هذه الفئة بالفعل، استمر بهذا العزم!',
         projected: 'إذا قضيت {{average}} يومياً فستنتهي في {{date}}',
         projectedUnknown: 'ابدأ بتسجيل صلوات القضاء لرؤية التوقع.'
       },
