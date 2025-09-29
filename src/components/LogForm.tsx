@@ -29,7 +29,7 @@ interface LogFormProps {
   initial?: PrayerLog | null;
 }
 
-const SHEET_MAX_HEIGHT = Dimensions.get('window').height * 0.9;
+const SHEET_MAX_HEIGHT = Dimensions.get('window').height * 0.85;
 
 export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, initial }) => {
   const { t } = useTranslation();
@@ -124,17 +124,17 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
             <View
               style={{ maxHeight: SHEET_MAX_HEIGHT }}
               className={clsx(
-                'rounded-t-3xl bg-white/95 px-6 pt-6 pb-8 shadow-2xl',
+                'rounded-t-3xl bg-white/95 px-5 pt-5 pb-6 shadow-2xl',
                 settings?.theme === 'dark' && 'bg-[#1f2429]/95'
               )}
             >
               <ScrollView
-                contentContainerStyle={{ paddingBottom: 24 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
               >
                 <Text
                   className={clsx(
-                    'mb-1 text-lg font-semibold text-teal',
+                    'mb-1 text-xl font-semibold text-teal',
                     settings?.theme === 'dark' && 'text-white'
                   )}
                 >
@@ -144,8 +144,8 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                   {t('logs.save')}
                 </Text>
 
-                <View className="mt-6 gap-5">
-                  <View className="gap-3">
+                <View className="mt-5 gap-4">
+                  <View className="gap-2.5">
                     <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                       {t('logs.prayerLabel')}
                     </Text>
@@ -164,7 +164,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                     </View>
                   </View>
 
-                  <View className="gap-3">
+                  <View className="gap-2.5">
                     <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                       {t('logs.typeLabel')}
                     </Text>
@@ -176,7 +176,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                             key={option}
                             onPress={() => setType(option)}
                             className={clsx(
-                              'flex-1 rounded-2xl border px-4 py-3',
+                              'flex-1 rounded-2xl border px-4 py-2.5',
                               active
                                 ? settings?.theme === 'dark'
                                   ? 'border-teal bg-teal'
@@ -186,8 +186,8 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                                 : 'border-olive/20 bg-white/70'
                             )}
                           >
-                            <Text
-                              className={clsx(
+                              <Text
+                                className={clsx(
                                 'text-center font-semibold',
                                 fontSizeClass,
                                 active ? 'text-white' : settings?.theme === 'dark' ? 'text-white' : 'text-teal'
@@ -203,7 +203,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
 
                   <View className="flex-row gap-4">
                     {type === 'qadha' ? (
-                      <View className="flex-1 gap-3">
+                      <View className="flex-1 gap-2.5">
                         <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                           {t('logs.countLabel')}
                         </Text>
@@ -215,20 +215,20 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                           placeholder="1"
                           placeholderTextColor={placeholderColor}
                           className={clsx(
-                            'rounded-2xl border px-4 py-3 text-teal shadow-sm',
+                            'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
                             borderMuted,
                             settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
                           )}
                         />
                       </View>
                     ) : (
-                      <View className="flex-1 gap-3">
+                      <View className="flex-1 gap-2.5">
                         <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                           {t('logs.countLabel')}
                         </Text>
                         <View
                           className={clsx(
-                            'rounded-2xl border px-4 py-3',
+                            'rounded-2xl border px-4 py-2.5',
                             borderMuted,
                             settings?.theme === 'dark' && 'bg-white/5'
                           )}
@@ -239,25 +239,25 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                         </View>
                       </View>
                     )}
-                    <View className="flex-1 gap-3">
+                    <View className="flex-1 gap-2.5">
                       <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                         {t('logs.timeLabel')}
                       </Text>
                       <TextInput
                         value={time}
-                        onChangeText={handleTimeChange}
-                        placeholder="HH:mm"
-                        placeholderTextColor={placeholderColor}
-                        className={clsx(
-                          'rounded-2xl border px-4 py-3 text-teal shadow-sm',
-                          borderMuted,
-                          settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
-                        )}
+                          onChangeText={handleTimeChange}
+                          placeholder="HH:mm"
+                          placeholderTextColor={placeholderColor}
+                          className={clsx(
+                          'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
+                            borderMuted,
+                            settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                          )}
                       />
                     </View>
                   </View>
 
-                  <View className="gap-3">
+                  <View className="gap-2.5">
                     <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                       {t('logs.dateLabel')}
                     </Text>
@@ -267,7 +267,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                       placeholder="YYYY-MM-DD"
                       placeholderTextColor={placeholderColor}
                       className={clsx(
-                        'rounded-2xl border px-4 py-3 text-teal shadow-sm',
+                        'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
                         borderMuted,
                         settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
                       )}
@@ -275,12 +275,17 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                   </View>
                 </View>
 
-                <View className="mt-6 flex-row gap-3">
+                <View className="mt-6 flex-row gap-2">
                   <View className="flex-1">
-                    <Button title={t('forms.cancel')} variant="secondary" onPress={onDismiss} />
+                    <Button
+                      title={t('forms.cancel')}
+                      variant="secondary"
+                      size="compact"
+                      onPress={onDismiss}
+                    />
                   </View>
                   <View className="flex-1">
-                    <Button title={t('forms.confirm')} onPress={handleSave} />
+                    <Button title={t('forms.confirm')} onPress={handleSave} size="compact" />
                   </View>
                 </View>
               </ScrollView>

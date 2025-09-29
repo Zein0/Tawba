@@ -53,42 +53,86 @@ const LogsScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <View className="flex-row justify-between items-center mb-4">
-        <Heading className="text-2xl">{t('logs.title')}</Heading>
-        <Button title={t('logs.add')} onPress={handleAdd} />
+      <View className="mb-4 flex-row items-center justify-between">
+        <View className="flex-1 pr-4">
+          <Heading className="text-2xl">{t('logs.title')}</Heading>
+          <Body className="mt-1 text-olive/70">{t('logs.subtitle')}</Body>
+        </View>
+        <Button title={t('logs.add')} onPress={handleAdd} size="compact" fullWidth={false} />
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         {dates.length === 0 && (
-          <Card>
-            <Body>{t('logs.empty')}</Body>
+          <Card className="items-center">
+            <Body className="text-center text-olive/70">{t('logs.empty')}</Body>
           </Card>
         )}
 
         {dates.map((date) => (
-          <Card key={date} className="mb-4">
-            <Text className="text-sm uppercase text-olive/70 mb-3">{dayjs(date).format('MMM D, YYYY')}</Text>
-            {groupedLogs[date].map((log) => (
-              <View key={log.id} className="mb-4 rounded-2xl bg-olive/10 p-4">
-                <View className="flex-row justify-between mb-2">
-                  <Body className="font-semibold">{t(`prayers.${log.prayer}`)}</Body>
-                  <Body>{formatTimeForDisplay(log.loggedAt)}</Body>
-                </View>
-                <Body>
-                  {log.type === 'current'
-                    ? t('logs.typeCurrent')
-                    : `${t('logs.typeQadha')} · ${log.count}`}
-                </Body>
-                <View className="flex-row gap-3 mt-3">
-                  <View className="flex-1">
-                    <Button title={t('logs.edit')} variant="secondary" onPress={() => handleEdit(log)} />
+          <Card key={date} className="space-y-4 border border-olive/15 dark:border-white/10">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60">
+                {dayjs(date).format('MMM D, YYYY')}
+              </Text>
+              <Text className="text-xs font-medium text-olive/70 dark:text-white/70">
+                {t('logs.totalForDay', { count: groupedLogs[date].length })}
+              </Text>
+            </View>
+            <View className="space-y-3">
+              {groupedLogs[date].map((log) => (
+                <View
+                  key={log.id}
+                  className="rounded-2xl border border-olive/20 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5"
+                >
+                  <View className="flex-row items-center justify-between">
+                    <Body className="font-semibold">{t(`prayers.${log.prayer}`)}</Body>
+                    <Text className="text-xs font-semibold uppercase tracking-wide text-olive/70 dark:text-white/60">
+                      {formatTimeForDisplay(log.loggedAt)}
+                    </Text>
                   </View>
-                  <View className="flex-1">
-                    <Button title={t('logs.delete')} variant="secondary" onPress={() => handleDelete(log)} />
+                  <View className="mt-2 flex-row items-center justify-between">
+                    <Body className="text-sm text-olive/80 dark:text-white/70">
+                      {log.type === 'current'
+                        ? t('logs.typeCurrent')
+                        : `${t('logs.typeQadha')} · ${log.count}`}
+                    </Body>
+                    <View
+                      className={`rounded-full px-3 py-1 ${
+                        log.type === 'current'
+                          ? 'bg-emerald-500/10'
+                          : 'bg-amber-500/10'
+                      }`}
+                    >
+                      <Text
+                        className={`text-xs font-semibold uppercase tracking-wide ${
+                          log.type === 'current' ? 'text-emerald-600' : 'text-amber-600'
+                        }`}
+                      >
+                        {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qadha'}`)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="mt-3 flex-row gap-2">
+                    <View className="flex-1">
+                      <Button
+                        title={t('logs.edit')}
+                        variant="secondary"
+                        size="compact"
+                        onPress={() => handleEdit(log)}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Button
+                        title={t('logs.delete')}
+                        variant="secondary"
+                        size="compact"
+                        onPress={() => handleDelete(log)}
+                      />
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              ))}
+            </View>
           </Card>
         ))}
       </ScrollView>
