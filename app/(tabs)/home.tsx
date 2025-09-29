@@ -22,7 +22,7 @@ const HomeScreen: React.FC = () => {
     promptPrayer,
     setPromptPrayer,
     markMissed,
-    logQadhaPrayer,
+    logQadaPrayer,
     logCurrentPrayer,
     locationDetails,
     nextPrayer
@@ -101,7 +101,7 @@ const HomeScreen: React.FC = () => {
         prayer={promptPrayer}
         onClose={() => setPromptPrayer(null)}
         onMissed={markMissed}
-        onQadha={logQadhaPrayer}
+        onQada={logQadaPrayer}
         onOnTime={logCurrentPrayer}
       />
     </ScreenContainer>

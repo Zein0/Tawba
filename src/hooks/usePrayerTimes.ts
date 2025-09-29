@@ -139,14 +139,14 @@ export const usePrayerTimes = () => {
     setPromptPrayer(null);
   };
 
-  const logQadhaPrayer = async (prayer: PrayerName, count: number) => {
+  const logQadaPrayer = async (prayer: PrayerName, count: number) => {
     if (count <= 0) {
       setPromptPrayer(null);
       return;
     }
     await addLog({
       prayer,
-      type: 'qadha',
+      type: 'qada',
       count,
       date: todayISO(),
       loggedAt: timeNow()
@@ -196,7 +196,7 @@ export const usePrayerTimes = () => {
     promptPrayer,
     setPromptPrayer,
     markMissed,
-    logQadhaPrayer,
+    logQadaPrayer,
     logCurrentPrayer,
     locationDetails,
     nextPrayer

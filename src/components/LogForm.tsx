@@ -68,7 +68,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
 
   const handleSave = async () => {
     const countValue = type === 'current' ? 1 : Number(count);
-    if (type === 'qadha' && (Number.isNaN(countValue) || countValue <= 0)) return;
+    if (type === 'qada' && (Number.isNaN(countValue) || countValue <= 0)) return;
     try {
       await onSubmit({
         prayer,
@@ -169,7 +169,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                       {t('logs.typeLabel')}
                     </Text>
                     <View className="flex-row gap-3">
-                      {(['current', 'qadha'] as PrayerType[]).map((option) => {
+                      {(['current', 'qada'] as PrayerType[]).map((option) => {
                         const active = type === option;
                         return (
                           <Pressable
@@ -193,7 +193,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                                 active ? 'text-white' : settings?.theme === 'dark' ? 'text-white' : 'text-teal'
                               )}
                             >
-                              {t(`logs.type${option === 'current' ? 'Current' : 'Qadha'}`)}
+                              {t(`logs.type${option === 'current' ? 'Current' : 'Qada'}`)}
                             </Text>
                           </Pressable>
                         );
@@ -202,7 +202,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                   </View>
 
                   <View className="flex-row gap-4">
-                    {type === 'qadha' ? (
+                    {type === 'qada' ? (
                       <View className="flex-1 gap-2.5">
                         <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
                           {t('logs.countLabel')}

@@ -17,12 +17,16 @@ const ProgressScreen: React.FC = () => {
   const [selectedPrayer, setSelectedPrayer] = useState<'all' | PrayerName>('all');
   const [userEditedTarget, setUserEditedTarget] = useState(false);
   const [dailyTarget, setDailyTarget] = useState(() =>
-    projection.dailyAverage > 0 ? Math.max(1, Math.round(projection.dailyAverage)).toString() : '1'
+    projection.dailyAverage > 0 ? Math.max(1, Math.round(projection.dailyAverage)).toString() : '2'
   );
 
   useEffect(() => {
-    if (!userEditedTarget && projection.dailyAverage > 0) {
-      setDailyTarget(Math.max(1, Math.round(projection.dailyAverage)).toString());
+    if (!userEditedTarget) {
+      if (projection.dailyAverage > 0) {
+        setDailyTarget(Math.max(1, Math.round(projection.dailyAverage)).toString());
+      } else {
+        setDailyTarget('2');
+      }
     }
   }, [projection.dailyAverage, userEditedTarget]);
 
@@ -84,16 +88,17 @@ const ProgressScreen: React.FC = () => {
         <Card>
           <Heading className="mb-4">{t('progress.title')}</Heading>
           {summaries.map((summary) => {
-            const total = summary.totalQadhaPrayed + summary.remaining;
-            const progress = total === 0 ? 0 : summary.totalQadhaPrayed / total;
+            const completed = summary.totalQadaPrayed;
+            const target = summary.missedTotal;
+            const progress = target > 0 ? Math.min(completed / target, 1) : completed > 0 ? 1 : 0;
             return (
               <View key={summary.prayer} className="mb-5">
                 <View className="mb-2 flex-row justify-between">
                   <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
                   <Body>
                     {t('progress.repaid', {
-                      completed: summary.totalQadhaPrayed.toLocaleString(),
-                      total: total.toLocaleString()
+                      completed: completed.toLocaleString(),
+                      total: target.toLocaleString()
                     })}
                   </Body>
                 </View>
@@ -147,13 +152,11 @@ const ProgressScreen: React.FC = () => {
               onChangeText={handleDailyTargetChange}
               keyboardType="number-pad"
               inputMode="numeric"
-              placeholder="3"
+              placeholder="2"
               placeholderTextColor="#a3ad9d"
               className="rounded-2xl border border-olive/20 px-4 py-3 text-base text-teal"
             />
-            <Body className="mt-2 text-olive/70">
-              {selectedPrayer === 'all' ? t('progress.perDayHintAll') : t('progress.perDayHint')}
-            </Body>
+            <Body className="mt-2 text-olive/70">{t('progress.perDayHint')}</Body>
           </View>
 
           <View className="rounded-2xl bg-olive/10 px-4 py-4">
@@ -175,9 +178,6 @@ const ProgressScreen: React.FC = () => {
                         count: daysToClear ?? 0
                       })}
                 </Body>
-                {selectedPrayer === 'all' && (
-                  <Body className="text-sm text-olive/70">{t('progress.allSelectionNotice')}</Body>
-                )}
               </View>
             ) : remainingForSelection === 0 ? (
               <Body>{t('progress.clearMessage')}</Body>

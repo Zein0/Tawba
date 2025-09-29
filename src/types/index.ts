@@ -1,6 +1,6 @@
 export type PrayerName = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
 
-export type PrayerType = 'current' | 'qadha';
+export type PrayerType = 'current' | 'qada';
 
 export interface MissedEstimate {
   prayer: PrayerName;
@@ -31,9 +31,10 @@ export interface Settings {
 export interface PrayerSummary {
   prayer: PrayerName;
   remaining: number;
-  totalQadhaPrayed: number;
+  totalQadaPrayed: number;
   totalCurrentPrayed: number;
   initialCount: number;
+  missedTotal: number;
 }
 
 export interface ProgressProjection {
