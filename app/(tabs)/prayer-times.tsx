@@ -9,11 +9,25 @@ import { Heading, Body } from '@/components/Typography';
 import { Button } from '@/components/Button';
 import { usePrayerTimes } from '@/hooks/usePrayerTimes';
 import { PRAYER_ORDER } from '@/constants/prayer';
+import { Ionicons } from '@expo/vector-icons';
+import clsx from 'clsx';
+import { useAppContext } from '@/contexts/AppContext';
+import { PrayerName } from '@/types';
+
+const PRAYER_ICONS: Record<PrayerName, keyof typeof Ionicons.glyphMap> = {
+  fajr: 'cloudy-night-outline',
+  dhuhr: 'sunny-outline',
+  asr: 'partly-sunny-outline',
+  maghrib: 'sunset-outline',
+  isha: 'moon-outline'
+};
 
 const PrayerTimesScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer } = usePrayerTimes();
+  const { settings } = useAppContext();
+  const isDark = settings?.theme === 'dark';
 
   return (
     <ScreenContainer>
@@ -43,19 +57,49 @@ const PrayerTimesScreen: React.FC = () => {
               return (
                 <View
                   key={prayer}
-                  className={`mb-3 rounded-2xl px-4 py-3 ${
-                    isNext ? 'bg-teal/10 border border-teal/30' : 'bg-white/40'
-                  }`}
-                >
-                  <Body className={`text-lg font-semibold ${isNext ? 'text-teal' : 'text-teal/90'}`}>
-                    {t(`prayers.${prayer}`)}
-                  </Body>
-                  <Body className="text-olive/80">{dayjs(entry.time).format('h:mm A')}</Body>
-                  {isNext && (
-                    <Body className="mt-1 text-xs uppercase tracking-wide text-teal/70">
-                      {t('prayerTimes.upNext')}
-                    </Body>
+                  className={clsx(
+                    'mb-3 rounded-2xl px-4 py-3',
+                    isNext
+                      ? 'border border-teal/40 bg-teal/10'
+                      : isDark
+                      ? 'bg-white/5'
+                      : 'bg-white/40'
                   )}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-3">
+                      <View
+                        className={clsx(
+                          'rounded-2xl p-2',
+                          isNext ? 'bg-teal/20' : isDark ? 'bg-white/10' : 'bg-olive/20'
+                        )}
+                      >
+                        <Ionicons
+                          name={PRAYER_ICONS[prayer]}
+                          size={20}
+                          color={isNext ? '#0f766e' : isDark ? '#f8fafc' : '#3f4f43'}
+                        />
+                      </View>
+                      <Body
+                        className={clsx(
+                          'font-semibold',
+                          isNext ? 'text-teal' : 'text-teal/90 dark:text-white'
+                        )}
+                      >
+                        {t(`prayers.${prayer}`)}
+                      </Body>
+                    </View>
+                    <View className="items-end">
+                      <Body className="text-lg font-semibold text-teal dark:text-white">
+                        {dayjs(entry.time).format('h:mm A')}
+                      </Body>
+                      {isNext && (
+                        <Body className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal">
+                          {t('prayerTimes.upNext')}
+                        </Body>
+                      )}
+                    </View>
+                  </View>
                 </View>
               );
             })
