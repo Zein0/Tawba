@@ -10,10 +10,12 @@ import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
 import { totalRemaining } from '@/utils/calculations';
 import clsx from 'clsx';
+import { useRTL } from '@/hooks/useRTL';
 
 const ProgressScreen: React.FC = () => {
   const { t } = useTranslation();
   const { summaries, projection } = useAppContext();
+  const rtl = useRTL();
   const [selectedPrayer, setSelectedPrayer] = useState<'all' | PrayerName>('all');
   const [userEditedTarget, setUserEditedTarget] = useState(false);
   const [dailyTarget, setDailyTarget] = useState(() =>
@@ -84,7 +86,7 @@ const ProgressScreen: React.FC = () => {
             const progress = target > 0 ? Math.min(completed / target, 1) : completed > 0 ? 1 : 0;
             return (
               <View key={summary.prayer} className="mb-5">
-                <View className="mb-2 flex-row justify-between">
+                <View className={clsx("mb-2 justify-between", rtl.flexDirection)}>
                   <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
                   <Body>
                     {t('progress.repaid', {
@@ -110,7 +112,7 @@ const ProgressScreen: React.FC = () => {
             <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
               {t('progress.focusLabel')}
             </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <View className={clsx("flex-wrap gap-2", rtl.flexDirection)}>
               {([
                 ...summaries.map((summary) => ({
                   value: summary.prayer,

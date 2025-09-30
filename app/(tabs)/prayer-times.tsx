@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
+import { useRTL } from '@/hooks/useRTL';
 
 const PRAYER_ICONS: Record<PrayerName, keyof typeof Ionicons.glyphMap> = {
   fajr: 'cloudy-night-outline',
@@ -27,6 +28,7 @@ const PrayerTimesScreen: React.FC = () => {
   const router = useRouter();
   const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer } = usePrayerTimes();
   const { settings } = useAppContext();
+  const rtl = useRTL();
   const isDark = settings?.theme === 'dark';
 
   return (
@@ -41,9 +43,9 @@ const PrayerTimesScreen: React.FC = () => {
 
         <View className="my-5 rounded-3xl bg-white/60 p-4 shadow-sm shadow-black/5">
           {loadingLocation ? (
-            <View className="flex-row items-center justify-center py-6">
+            <View className={clsx("items-center justify-center py-6", rtl.flexDirection)}>
               <ActivityIndicator color="#7a8b71" />
-              <Body className="ml-3 text-olive/80">{t('prayerTimes.loading')}</Body>
+              <Body className={clsx("text-olive/80", rtl.ml("3"))}>{t('prayerTimes.loading')}</Body>
             </View>
           ) : error ? (
             <View className="py-4">
@@ -66,8 +68,8 @@ const PrayerTimesScreen: React.FC = () => {
                       : 'bg-white/40'
                   )}
                 >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-row items-center gap-3">
+                  <View className={clsx("items-center justify-between", rtl.flexDirection)}>
+                    <View className={clsx("items-center gap-3", rtl.flexDirection)}>
                       <View
                         className={clsx(
                           'rounded-2xl p-2',

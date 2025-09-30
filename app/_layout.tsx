@@ -13,11 +13,10 @@ const SyncLanguage: React.FC = () => {
     if (i18n.language !== settings.language) {
       i18n.changeLanguage(settings.language);
     }
+    // Enable RTL support without forcing restart
     const shouldUseRTL = settings.language === 'ar';
-    if (I18nManager.isRTL !== shouldUseRTL) {
-      I18nManager.allowRTL(shouldUseRTL);
-      I18nManager.forceRTL(shouldUseRTL);
-    }
+    I18nManager.allowRTL(true);
+    // Don't use forceRTL as it requires restart - we'll handle RTL in components
   }, [settings?.language]);
 
   useEffect(() => {

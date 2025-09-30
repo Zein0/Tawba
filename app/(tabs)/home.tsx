@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
+import clsx from 'clsx';
 import { useRouter } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
@@ -13,11 +14,13 @@ import { LogForm } from '@/components/LogForm';
 import { PrayerPromptModal } from '@/components/PrayerPromptModal';
 import { totalRemaining, todayISO } from '@/utils/calculations';
 import { PrayerLog } from '@/types';
+import { useRTL } from '@/hooks/useRTL';
 
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { summaries, logs, addLog } = useAppContext();
+  const rtl = useRTL();
   const {
     promptPrayer,
     setPromptPrayer,
@@ -74,7 +77,7 @@ const HomeScreen: React.FC = () => {
           </Text>
         </View>
 
-        <View className="flex-row gap-3">
+        <View className={clsx("gap-3", rtl.flexDirection)}>
           <View className="flex-1">
             <Button title={t('dashboard.addLog')} onPress={() => setShowForm(true)} />
           </View>
@@ -90,7 +93,7 @@ const HomeScreen: React.FC = () => {
 
       <Card>
         <Heading className="mb-3 text-xl">{t('dashboard.todaysProgress')}</Heading>
-        <View className="flex-row justify-between">
+        <View className={clsx("justify-between", rtl.flexDirection)}>
           <Body>{t('dashboard.prayed', { count: prayedToday })}</Body>
           <Body>{t('dashboard.missed', { count: missedToday })}</Body>
         </View>

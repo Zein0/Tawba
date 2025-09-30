@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, ViewStyle } from 'react-native';
 import clsx from 'clsx';
 import { useAppContext } from '@/contexts/AppContext';
+import { useRTL } from '@/hooks/useRTL';
 
 type ButtonSize = 'default' | 'compact';
 
@@ -25,6 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
   className
 }) => {
   const { settings } = useAppContext();
+  const rtl = useRTL();
   const isDark = settings?.theme === 'dark';
 
   const containerClasses = clsx(
@@ -69,6 +71,7 @@ export const Button: React.FC<ButtonProps> = ({
         className={clsx(
           'font-semibold',
           textSizeClass,
+          rtl.textAlign,
           variant === 'primary' ? 'text-white' : isDark ? 'text-white' : 'text-teal'
         )}
       >

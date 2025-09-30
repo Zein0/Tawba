@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Alert, View, Switch, Text, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
+import clsx from 'clsx';
 import { useRouter } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
 import { Heading, Body } from '@/components/Typography';
 import { Button } from '@/components/Button';
 import { useAppContext } from '@/contexts/AppContext';
+import { useRTL } from '@/hooks/useRTL';
 
 const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -20,6 +22,7 @@ const SettingsScreen: React.FC = () => {
     updateLocation,
     resetApp
   } = useAppContext();
+  const rtl = useRTL();
   const [locLoading, setLocLoading] = useState(false);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
   const [resolvingLocation, setResolvingLocation] = useState(false);
@@ -114,7 +117,7 @@ const SettingsScreen: React.FC = () => {
 
         <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.language')}</Body>
-          <View className="flex-row gap-3">
+          <View className={clsx("gap-3", rtl.flexDirection)}>
             <View className="flex-1">
               <Button
                 title={t('settings.english')}
@@ -134,7 +137,7 @@ const SettingsScreen: React.FC = () => {
 
         <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.fontSize')}</Body>
-          <View className="flex-row gap-3">
+          <View className={clsx("gap-3", rtl.flexDirection)}>
             {(['small', 'medium', 'large'] as const).map((size) => (
               <View className="flex-1" key={size}>
                 <Button
@@ -164,7 +167,7 @@ const SettingsScreen: React.FC = () => {
 
         <View className="mb-6">
           <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.reminders')}</Body>
-          <View className="flex-row items-center justify-between rounded-2xl bg-olive/10 px-4 py-4">
+          <View className={clsx("items-center justify-between rounded-2xl bg-olive/10 px-4 py-4", rtl.flexDirection)}>
             <Body>{t('settings.enableReminders')}</Body>
             <Switch
               value={settings?.remindersEnabled}

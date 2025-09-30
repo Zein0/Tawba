@@ -3,10 +3,12 @@ import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '@/contexts/AppContext';
+import { useRTL } from '@/hooks/useRTL';
 
 const TabLayout: React.FC = () => {
   const { t } = useTranslation();
   const { settings } = useAppContext();
+  const rtl = useRTL();
   const isDark = settings?.theme === 'dark';
 
   return (
@@ -20,7 +22,8 @@ const TabLayout: React.FC = () => {
           borderTopWidth: 0,
           height: 72,
           paddingBottom: 12,
-          paddingTop: 12
+          paddingTop: 12,
+          flexDirection: rtl.isRTL ? 'row-reverse' : 'row'
         },
         tabBarIcon: ({ color, size }) => {
           switch (route.name) {

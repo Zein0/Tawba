@@ -87,7 +87,7 @@ export const initializeDatabase = async () => {
     fontSize: 'medium',
     startDate: null,
     remindersEnabled: true,
-    theme: 'system',
+    theme: 'light',
     location: null
   };
 
@@ -188,7 +188,7 @@ export const getPrayerLogs = async (): Promise<PrayerLog[]> => {
     id: row.id,
     date: row.date,
     prayer: row.prayer,
-    type: (row.type === 'qadha' ? 'qada' : row.type) as PrayerType,
+    type: (row.type === 'qada' ? 'qada' : row.type) as PrayerType,
     count: row.count,
     loggedAt: row.logged_at
   }));

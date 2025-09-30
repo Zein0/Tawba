@@ -19,5 +19,9 @@ module.exports = {
       }
     }
   },
-  plugins: []
+  plugins: [],
+  // Enable RTL support
+  corePlugins: {
+    // Enable all directional utilities
+  }
 };
