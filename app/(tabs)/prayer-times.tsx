@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
 import { Heading, Body } from '@/components/Typography';
@@ -26,10 +26,16 @@ const PRAYER_ICONS: Record<PrayerName, keyof typeof Ionicons.glyphMap> = {
 const PrayerTimesScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer } = usePrayerTimes();
+  const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer, refreshNextPrayer } = usePrayerTimes();
   const { settings } = useAppContext();
   const rtl = useRTL();
   const isDark = settings?.theme === 'dark';
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshNextPrayer();
+    }, [refreshNextPrayer])
+  );
 
   return (
     <ScreenContainer>

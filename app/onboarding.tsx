@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import clsx from 'clsx';
@@ -295,10 +295,15 @@ const OnboardingScreen: React.FC = () => {
                       selectedValue={durationUnit}
                       onValueChange={(value) => setDurationUnit(value as DurationUnit)}
                       style={{
-                        height: 50,
+                        height: Platform.OS === 'ios' ? 120 : 50,
                         color: isDark ? 'text-white' : 'text-olive',
                       }}
-                      itemStyle={{
+                      itemStyle={Platform.OS === 'ios' ? {
+                        height: 120,
+                        fontSize: 16,
+                        fontWeight: '600',
+                        color: isDark ? '#ffffff' : '#7a8b71',
+                      } : {
                         color: isDark ? 'text-white' : 'text-olive',
                         fontSize: 16,
                         fontWeight: '600'
@@ -309,7 +314,7 @@ const OnboardingScreen: React.FC = () => {
                           key={unit}
                           label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
                           value={unit}
-                          color={isDark ? 'text-white/70' : 'text-olive/80'}
+                          color={isDark ? '#ffffff' : '#7a8b71'}
                         />
                       ))}
                     </Picker>

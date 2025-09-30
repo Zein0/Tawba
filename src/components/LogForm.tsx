@@ -158,7 +158,17 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                         settings?.theme === 'dark' && 'bg-white/5'
                       )}
                     >
-                      <Picker selectedValue={prayer} onValueChange={(value) => setPrayer(value)}>
+                      <Picker 
+                        selectedValue={prayer} 
+                        onValueChange={(value) => setPrayer(value)}
+                        style={{
+                          height: Platform.OS === 'ios' ? 120 : undefined,
+                        }}
+                        itemStyle={Platform.OS === 'ios' ? {
+                          height: 120,
+                          fontSize: 16,
+                        } : undefined}
+                      >
                         {PRAYER_ORDER.map((p) => (
                           <Picker.Item key={p} label={t(`prayers.${p}`)} value={p} />
                         ))}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import dayjs from 'dayjs';
@@ -29,6 +29,7 @@ export const usePrayerTimes = () => {
   const [error, setError] = useState<string | null>(null);
   const [promptPrayer, setPromptPrayer] = useState<PrayerName | null>(null);
   const [locationDetails, setLocationDetails] = useState<LocationDetails | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     if (!settings) return;
@@ -187,7 +188,11 @@ export const usePrayerTimes = () => {
     const tomorrow = dayjs().add(1, 'day').toDate();
     const tomorrowTimes = computePrayerTimes(tomorrow, settings.location);
     return tomorrowTimes[0] ?? null;
-  }, [prayerTimes, settings?.location]);
+  }, [prayerTimes, settings?.location, refreshTrigger]);
+
+  const refreshNextPrayer = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
 
   return {
     prayerTimes,
@@ -199,6 +204,7 @@ export const usePrayerTimes = () => {
     logQadaPrayer,
     logCurrentPrayer,
     locationDetails,
-    nextPrayer
+    nextPrayer,
+    refreshNextPrayer
   };
 };

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
 import { Heading, Body } from '@/components/Typography';
@@ -28,9 +28,16 @@ const HomeScreen: React.FC = () => {
     logQadaPrayer,
     logCurrentPrayer,
     locationDetails,
-    nextPrayer
+    nextPrayer,
+    refreshNextPrayer
   } = usePrayerTimes();
   const [showForm, setShowForm] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshNextPrayer();
+    }, [refreshNextPrayer])
+  );
 
   const todayLogs = useMemo(() => logs.filter((log) => log.date === todayISO()), [logs]);
 
