@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import clsx from 'clsx';
 import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
+import { useRTL } from '@/hooks/useRTL';
 
 const PRAYER_ICONS: Record<PrayerName, keyof typeof Ionicons.glyphMap> = {
   fajr: 'cloudy-night-outline',
@@ -28,26 +29,38 @@ const PrayerTimesScreen: React.FC = () => {
   const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer } = usePrayerTimes();
   const { settings } = useAppContext();
   const isDark = settings?.theme === 'dark';
+  const { isRTL, writingDirection, textAlign } = useRTL();
 
   return (
     <ScreenContainer>
       <Card>
         <Heading className="mb-2 text-2xl">{t('prayerTimes.title')}</Heading>
         {locationDetails?.formatted ? (
-          <Body className="text-olive/80">{t('prayerTimes.location', { location: locationDetails.formatted })}</Body>
+          <Body className="text-olive/80" style={{ textAlign }}>
+            {t('prayerTimes.location', { location: locationDetails.formatted })}
+          </Body>
         ) : (
-          <Body className="text-olive/80">{t('prayerTimes.locationUnknown')}</Body>
+          <Body className="text-olive/80" style={{ textAlign }}>
+            {t('prayerTimes.locationUnknown')}
+          </Body>
         )}
 
         <View className="my-5 rounded-3xl bg-white/60 p-4 shadow-sm shadow-black/5">
           {loadingLocation ? (
-            <View className="flex-row items-center justify-center py-6">
+            <View className={clsx('items-center justify-center py-6', isRTL ? 'flex-row-reverse' : 'flex-row')}>
               <ActivityIndicator color="#7a8b71" />
-              <Body className="ml-3 text-olive/80">{t('prayerTimes.loading')}</Body>
+              <Body
+                className={clsx('text-olive/80', isRTL ? 'mr-3' : 'ml-3')}
+                style={{ textAlign }}
+              >
+                {t('prayerTimes.loading')}
+              </Body>
             </View>
           ) : error ? (
             <View className="py-4">
-              <Body className="text-red-500">{t(`prayerTimes.errors.${error}`)}</Body>
+              <Body className="text-red-500" style={{ textAlign }}>
+                {t(`prayerTimes.errors.${error}`)}
+              </Body>
             </View>
           ) : (
             PRAYER_ORDER.map((prayer) => {
@@ -66,8 +79,8 @@ const PrayerTimesScreen: React.FC = () => {
                       : 'bg-white/40'
                   )}
                 >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-row items-center gap-3">
+                  <View className={clsx('items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+                    <View className={clsx('items-center gap-3', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                       <View
                         className={clsx(
                           'rounded-2xl p-2',
@@ -85,16 +98,20 @@ const PrayerTimesScreen: React.FC = () => {
                           'font-semibold',
                           isNext ? 'text-teal' : 'text-teal/90 dark:text-white'
                         )}
+                        style={{ textAlign }}
                       >
                         {t(`prayers.${prayer}`)}
                       </Body>
                     </View>
-                    <View className="items-end">
-                      <Body className="text-lg font-semibold text-teal dark:text-white">
+                    <View className={clsx(isRTL ? 'items-start' : 'items-end')}>
+                      <Body className="text-lg font-semibold text-teal dark:text-white" style={{ textAlign }}>
                         {dayjs(entry.time).format('h:mm A')}
                       </Body>
                       {isNext && (
-                        <Body className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal">
+                        <Body
+                          className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal"
+                          style={{ textAlign }}
+                        >
                           {t('prayerTimes.upNext')}
                         </Body>
                       )}
@@ -106,7 +123,9 @@ const PrayerTimesScreen: React.FC = () => {
           )}
         </View>
 
-        <Body className="mb-4 text-olive/70">{t('prayerTimes.updateHint')}</Body>
+        <Body className="mb-4 text-olive/70" style={{ textAlign }}>
+          {t('prayerTimes.updateHint')}
+        </Body>
         <Button
           title={t('prayerTimes.manageLocation')}
           variant="secondary"

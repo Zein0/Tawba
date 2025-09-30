@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
 import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
+import { useRTL } from '@/hooks/useRTL';
 
 interface PrayerPromptModalProps {
   prayer: PrayerName | null;
@@ -23,6 +24,7 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { settings } = useAppContext();
+  const { writingDirection, textAlign } = useRTL();
   const [step, setStep] = useState<'question' | 'qada'>('question');
   const [count, setCount] = useState('1');
 
@@ -63,11 +65,17 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
 
   return (
     <Modal visible animationType="fade" transparent>
-      <View className="flex-1 bg-black/50 justify-center px-6">
-        <View className={clsx('rounded-3xl p-6', settings?.theme === 'dark' ? 'bg-[#1f2429]' : 'bg-white')}>
+      <View className="flex-1 bg-black/50 justify-center px-6" style={{ writingDirection }}>
+        <View
+          className={clsx('rounded-3xl p-6', settings?.theme === 'dark' ? 'bg-[#1f2429]' : 'bg-white')}
+          style={{ writingDirection }}
+        >
           {step === 'question' ? (
             <>
-              <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
+              <Text
+                className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}
+                style={{ textAlign, writingDirection }}
+              >
                 {t('notifications.question', { prayer: prayerLabel })}
               </Text>
               <View className="mt-5 gap-3">
@@ -78,7 +86,10 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
             </>
           ) : (
             <>
-              <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
+              <Text
+                className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}
+                style={{ textAlign, writingDirection }}
+              >
                 {t('notifications.qadaQuestion')}
               </Text>
               <TextInput
@@ -89,6 +100,7 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
                   'mt-4 rounded-2xl border border-olive/30 px-4 py-3 text-teal',
                   settings?.theme === 'dark' && 'border-white/20 text-white'
                 )}
+                style={{ writingDirection, textAlign }}
               />
               <View className="mt-5 gap-3">
                 <Button title={t('notifications.submit')} onPress={handleQadaSubmit} />

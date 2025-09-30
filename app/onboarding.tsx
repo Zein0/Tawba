@@ -13,6 +13,7 @@ import { calculateInitialEstimate, todayISO } from '@/utils/calculations';
 import { PrayerName } from '@/types';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
+import { useRTL } from '@/hooks/useRTL';
 
 type DurationUnit = 'days' | 'months' | 'years';
 
@@ -30,6 +31,7 @@ const OnboardingScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { completeOnboarding, updateLocation, settings, setLanguage } = useAppContext();
+  const { isRTL, writingDirection, textAlign } = useRTL();
 
   const [step, setStep] = useState<'duration' | 'breakdown'>('duration');
   const [durationUnit, setDurationUnit] = useState<DurationUnit>('years');
@@ -205,13 +207,17 @@ const OnboardingScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 40, writingDirection }}
+        showsVerticalScrollIndicator={false}
+      >
         <Card>
             <View
               className={clsx(
-                'flex-row rounded-full border px-1 py-1 w-[fit-content] mb-2 self-end',
+                'rounded-full border px-1 py-1 w-[fit-content] mb-2 self-end',
                 isDark ? 'border-white/15 bg-white/10' : 'border-olive/20 bg-white/80'
               )}
+              style={{ writingDirection }}
             >
               {languageOptions.map((option) => {
                 const active = (settings?.language ?? i18n.language) === option.code;
@@ -231,6 +237,7 @@ const OnboardingScreen: React.FC = () => {
                         'text-xs font-semibold uppercase tracking-wide',
                         active ? 'text-white' : isDark ? 'text-white/70' : 'text-olive/70'
                       )}
+                      style={{ writingDirection }}
                     >
                       {option.code.toUpperCase()}
                     </Text>
@@ -238,18 +245,26 @@ const OnboardingScreen: React.FC = () => {
                 );
               })}
             </View>
-          <View className="mb-6 flex-row items-start justify-between">
-            <View className="flex-1 pr-4">
+          <View className={clsx('mb-6 items-start justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+            <View className="flex-1" style={{ paddingEnd: 16 }}>
               <Heading className="text-3xl">{t('onboarding.title')}</Heading>
-              <Body className="mt-2 text-olive/70 dark:text-white/70">{t('onboarding.subtitle')}</Body>
+              <Body className="mt-2 text-olive/70 dark:text-white/70" style={{ textAlign }}>
+                {t('onboarding.subtitle')}
+              </Body>
             </View>
           </View>
 
-          <View className="mb-6 flex-row items-center justify-between gap-4">
-            <Text className="text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60">
+          <View className={clsx('mb-6 items-center justify-between gap-4', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+            <Text
+              className={clsx(
+                'text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60',
+                isRTL ? 'text-right' : 'text-left'
+              )}
+              style={{ writingDirection }}
+            >
               {t('onboarding.stepLabel', { current: stepIndex, total: totalSteps })}
             </Text>
-            <View className="flex-1 flex-row gap-1.5">
+            <View className={clsx('flex-1 gap-1.5', isRTL ? 'flex-row-reverse' : 'flex-row')}>
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <View
                   key={index}
@@ -264,11 +279,20 @@ const OnboardingScreen: React.FC = () => {
 
           {step === 'duration' ? (
             <>
-              <View className="mb-5 rounded-3xl border border-olive/20 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10">
-                <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+              <View
+                className="mb-5 rounded-3xl border border-olive/20 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10"
+                style={{ writingDirection }}
+              >
+                <Text
+                  className={clsx(
+                    'text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70',
+                    isRTL ? 'text-right' : 'text-left'
+                  )}
+                  style={{ writingDirection }}
+                >
                   {t('onboarding.durationLabel')}
                 </Text>
-                <View className="mt-3 flex-row items-center gap-3">
+                <View className={clsx('mt-3 items-center gap-3', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                   <TextInput
                     keyboardType="decimal-pad"
                     value={durationValue}
@@ -310,13 +334,16 @@ const OnboardingScreen: React.FC = () => {
                     </Picker>
                   </View>
                 </View>
-                <Body className="mt-3 text-sm text-olive/70 dark:text-white/60">
+                <Body className="mt-3 text-sm text-olive/70 dark:text-white/60" style={{ textAlign }}>
                   {t('onboarding.durationHint')}
                 </Body>
               </View>
 
-              <View className="mb-6 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10">
-                <Text className="text-sm font-medium text-olive dark:text-white">
+              <View
+                className="mb-6 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10"
+                style={{ writingDirection }}
+              >
+                <Text className={clsx('text-sm font-medium text-olive dark:text-white', isRTL ? 'text-right' : 'text-left')}>
                   {t('onboarding.calculate', { total: totalEstimate.toLocaleString() })}
                 </Text>
               </View>
@@ -325,14 +352,25 @@ const OnboardingScreen: React.FC = () => {
             </>
           ) : (
             <>
-              <Body className="mb-4 text-olive/70 dark:text-white/70">{t('onboarding.adjust')}</Body>
+              <Body className="mb-4 text-olive/70 dark:text-white/70" style={{ textAlign }}>
+                {t('onboarding.adjust')}
+              </Body>
 
               {PRAYER_ORDER.map((prayer) => (
                 <View
                   key={prayer}
-                  className="mb-3 flex-row items-center justify-between rounded-3xl border border-olive/20 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-white/5"
+                  className={clsx(
+                    'mb-3 items-center justify-between rounded-3xl border border-olive/20 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-white/5',
+                    isRTL ? 'flex-row-reverse' : 'flex-row'
+                  )}
                 >
-                  <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+                  <Text
+                    className={clsx(
+                      'text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70',
+                      isRTL ? 'text-right' : 'text-left'
+                    )}
+                    style={{ writingDirection }}
+                  >
                     {t(`prayers.${prayer}`)}
                   </Text>
                   <TextInput
@@ -348,8 +386,14 @@ const OnboardingScreen: React.FC = () => {
               ))}
 
               <View className="mt-2 rounded-3xl border border-olive/20 bg-white/70 px-4 py-4 dark:border-white/10 dark:bg-white/5">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+                <View className={clsx('items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+                  <Text
+                    className={clsx(
+                      'text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70',
+                      isRTL ? 'text-right' : 'text-left'
+                    )}
+                    style={{ writingDirection }}
+                  >
                     {t('onboarding.locationReady')}
                   </Text>
                   {(loadingLocation || resolvingAddress) && (
@@ -361,11 +405,12 @@ const OnboardingScreen: React.FC = () => {
                     'mt-3 text-sm',
                     locationError ? 'text-rose-500' : isDark ? 'text-white' : 'text-teal'
                   )}
+                  style={{ writingDirection, textAlign }}
                   numberOfLines={2}
                 >
                   {currentLocationText}
                 </Text>
-                <View className="mt-4 flex-row justify-end">
+                <View className={clsx('mt-4 justify-end', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                   <Button
                     title={loadingLocation ? '…' : t('settings.updateLocation')}
                     variant="secondary"
@@ -376,7 +421,7 @@ const OnboardingScreen: React.FC = () => {
                 </View>
               </View>
 
-              <View className="mt-6 space-y-3">
+              <View className="mt-6 space-y-3" style={{ writingDirection }}>
                 <Button title={t('onboarding.continue')} onPress={handleContinue} />
                 <Button style={{ marginTop: 12 }} title={t('forms.back')} variant="secondary" onPress={handleBack} />
                 {hasAdjusted && (

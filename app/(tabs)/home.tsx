@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useRouter } from 'expo-router';
+import clsx from 'clsx';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { Card } from '@/components/Card';
 import { Heading, Body } from '@/components/Typography';
@@ -13,6 +14,7 @@ import { LogForm } from '@/components/LogForm';
 import { PrayerPromptModal } from '@/components/PrayerPromptModal';
 import { totalRemaining, todayISO } from '@/utils/calculations';
 import { PrayerLog } from '@/types';
+import { useRTL } from '@/hooks/useRTL';
 
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -28,6 +30,7 @@ const HomeScreen: React.FC = () => {
     nextPrayer
   } = usePrayerTimes();
   const [showForm, setShowForm] = useState(false);
+  const { isRTL, writingDirection, textAlign } = useRTL();
 
   const todayLogs = useMemo(() => logs.filter((log) => log.date === todayISO()), [logs]);
 
@@ -45,19 +48,28 @@ const HomeScreen: React.FC = () => {
         <Body className="mb-4">{dayjs().format('dddd, MMM D')}</Body>
 
         <View className="mb-6">
-          <Text className="text-sm uppercase tracking-wider text-olive/70 mb-2">
+          <Text
+            className={clsx(
+              'text-sm uppercase tracking-wider text-olive/70 mb-2',
+              isRTL ? 'text-right' : 'text-left'
+            )}
+            style={{ writingDirection }}
+          >
             {t('dashboard.nextPrayer')}
           </Text>
-          <Text className="text-3xl font-semibold text-teal">
+          <Text
+            className={clsx('text-3xl font-semibold text-teal', isRTL ? 'text-right' : 'text-left')}
+            style={{ writingDirection }}
+          >
             {nextPrayer ? t(`prayers.${nextPrayer.prayer}`) : t('dashboard.nextPrayer')}
           </Text>
           {nextPrayer && (
-            <Body className="mt-2 text-olive/80">
+            <Body className="mt-2 text-olive/80" style={{ textAlign }}>
               {t('dashboard.nextPrayerAt', { time: dayjs(nextPrayer.time).format('h:mm A') })}
             </Body>
           )}
           {locationDetails?.formatted && (
-            <Body className="mt-2 text-olive/70">
+            <Body className="mt-2 text-olive/70" style={{ textAlign }}>
               {t('dashboard.locationLine', {
                 location: locationDetails.formatted
               })}
@@ -66,15 +78,24 @@ const HomeScreen: React.FC = () => {
         </View>
 
         <View className="mb-6">
-          <Text className="text-sm uppercase tracking-wider text-olive/70 mb-2">
+          <Text
+            className={clsx(
+              'text-sm uppercase tracking-wider text-olive/70 mb-2',
+              isRTL ? 'text-right' : 'text-left'
+            )}
+            style={{ writingDirection }}
+          >
             {t('dashboard.totalRemaining')}
           </Text>
-          <Text className="text-3xl font-semibold text-teal">
+          <Text
+            className={clsx('text-3xl font-semibold text-teal', isRTL ? 'text-right' : 'text-left')}
+            style={{ writingDirection }}
+          >
             {totalRemaining(summaries).toLocaleString()}
           </Text>
         </View>
 
-        <View className="flex-row gap-3">
+        <View className={clsx('gap-3', isRTL ? 'flex-row-reverse' : 'flex-row')}>
           <View className="flex-1">
             <Button title={t('dashboard.addLog')} onPress={() => setShowForm(true)} />
           </View>
@@ -90,7 +111,7 @@ const HomeScreen: React.FC = () => {
 
       <Card>
         <Heading className="mb-3 text-xl">{t('dashboard.todaysProgress')}</Heading>
-        <View className="flex-row justify-between">
+        <View className={clsx('justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
           <Body>{t('dashboard.prayed', { count: prayedToday })}</Body>
           <Body>{t('dashboard.missed', { count: missedToday })}</Body>
         </View>

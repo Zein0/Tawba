@@ -2,12 +2,15 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 import { useAppContext } from '@/contexts/AppContext';
+import { useRTL } from '@/hooks/useRTL';
 
 const TabLayout: React.FC = () => {
   const { t } = useTranslation();
   const { settings } = useAppContext();
   const isDark = settings?.theme === 'dark';
+  const { writingDirection, isRTL } = useRTL();
 
   return (
     <Tabs
@@ -16,11 +19,19 @@ const TabLayout: React.FC = () => {
         tabBarActiveTintColor: '#7a8b71',
         tabBarInactiveTintColor: isDark ? '#6b7280' : '#9ca3af',
         tabBarStyle: {
-          backgroundColor: isDark ? '#101418' : '#ffffff',
+          backgroundColor: isDark ? '#101418' : '#f8f4ec',
           borderTopWidth: 0,
-          height: 72,
-          paddingBottom: 12,
+          height: Platform.OS === 'ios' ? 88 : 72,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 12,
           paddingTop: 12
+        },
+        tabBarLabelStyle: {
+          writingDirection,
+          textAlign: 'center',
+          fontSize: 12
+        },
+        tabBarItemStyle: {
+          flexDirection: isRTL ? 'row-reverse' : 'row'
         },
         tabBarIcon: ({ color, size }) => {
           switch (route.name) {

@@ -10,6 +10,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { PrayerName } from '@/types';
 import { totalRemaining } from '@/utils/calculations';
 import clsx from 'clsx';
+import { useRTL } from '@/hooks/useRTL';
 
 const ProgressScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const ProgressScreen: React.FC = () => {
   const [dailyTarget, setDailyTarget] = useState(() =>
     '2'
   );
+  const { isRTL, writingDirection, textAlign } = useRTL();
 
 
   const remainingForSelection = useMemo(() => {
@@ -84,9 +86,9 @@ const ProgressScreen: React.FC = () => {
             const progress = target > 0 ? Math.min(completed / target, 1) : completed > 0 ? 1 : 0;
             return (
               <View key={summary.prayer} className="mb-5">
-                <View className="mb-2 flex-row justify-between">
+                <View className={clsx('mb-2 justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                   <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
-                  <Body>
+                  <Body style={{ textAlign }}>
                     {t('progress.repaid', {
                       completed: completed.toLocaleString(),
                       total: target.toLocaleString()
@@ -94,7 +96,7 @@ const ProgressScreen: React.FC = () => {
                   </Body>
                 </View>
                 <ProgressBar progress={progress} />
-                <Body className="mt-1">
+                <Body className="mt-1" style={{ textAlign }}>
                   {t('dashboard.totalRemaining')}: {summary.remaining.toLocaleString()}
                 </Body>
               </View>
@@ -104,13 +106,21 @@ const ProgressScreen: React.FC = () => {
 
         <Card>
           <Heading className="mb-3 text-xl">{t('progress.filterTitle')}</Heading>
-          <Body className="mb-5 text-olive/70">{t('progress.filterSubtitle')}</Body>
+          <Body className="mb-5 text-olive/70" style={{ textAlign }}>
+            {t('progress.filterSubtitle')}
+          </Body>
 
           <View className="mb-5">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+            <Text
+              className={clsx(
+                'mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70',
+                isRTL ? 'text-right' : 'text-left'
+              )}
+              style={{ writingDirection }}
+            >
               {t('progress.focusLabel')}
             </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <View className={clsx('flex-wrap gap-2', isRTL ? 'flex-row-reverse' : 'flex-row')}>
               {([
                 ...summaries.map((summary) => ({
                   value: summary.prayer,
@@ -124,7 +134,10 @@ const ProgressScreen: React.FC = () => {
                     onPress={() => setSelectedPrayer(option.value)}
                     className={clsx('rounded-full px-4 py-2', active ? 'bg-olive' : 'bg-olive/10')}
                   >
-                    <Text className={clsx('font-semibold', active ? 'text-white' : 'text-teal')}>
+                    <Text
+                      className={clsx('font-semibold', active ? 'text-white' : 'text-teal', isRTL ? 'text-right' : 'text-left')}
+                      style={{ writingDirection }}
+                    >
                       {option.label}
                     </Text>
                   </Pressable>
@@ -134,7 +147,13 @@ const ProgressScreen: React.FC = () => {
           </View>
 
           <View className="mb-5">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+            <Text
+              className={clsx(
+                'mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70',
+                isRTL ? 'text-right' : 'text-left'
+              )}
+              style={{ writingDirection }}
+            >
               {selectedPrayer === 'all' ? t('progress.perDayLabelAll') : t('progress.perDayLabel')}
             </Text>
             <TextInput
@@ -145,17 +164,20 @@ const ProgressScreen: React.FC = () => {
               placeholder="2"
               placeholderTextColor="#a3ad9d"
               className="rounded-2xl border border-olive/20 px-4 py-3 text-base text-teal"
+              style={{ writingDirection, textAlign }}
             />
-            <Body className="mt-2 text-olive/70">{t('progress.perDayHint')}</Body>
+            <Body className="mt-2 text-olive/70" style={{ textAlign }}>
+              {t('progress.perDayHint')}
+            </Body>
           </View>
 
-          <View className="rounded-2xl bg-olive/10 px-4 py-4">
-            <Body className="mb-1 font-semibold text-olive">
+          <View className="rounded-2xl bg-olive/10 px-4 py-4" style={{ writingDirection }}>
+            <Body className="mb-1 font-semibold text-olive" style={{ textAlign }}>
               {t('progress.remainingLabel', { remaining: remainingForSelection.toLocaleString() })}
             </Body>
             {projectedDate ? (
               <View className="gap-2">
-                <Body>
+                <Body style={{ textAlign }}>
                   {selectedPrayer === 'all'
                     ? t('progress.projectedDetailedAll', {
                         average: dailyTargetNumber,
@@ -170,9 +192,9 @@ const ProgressScreen: React.FC = () => {
                 </Body>
               </View>
             ) : remainingForSelection === 0 ? (
-              <Body>{t('progress.clearMessage')}</Body>
+              <Body style={{ textAlign }}>{t('progress.clearMessage')}</Body>
             ) : (
-              <Body>{t('progress.projectedUnknown')}</Body>
+              <Body style={{ textAlign }}>{t('progress.projectedUnknown')}</Body>
             )}
           </View>
         </Card>

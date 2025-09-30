@@ -12,12 +12,14 @@ import { groupLogsByDate, formatTimeForDisplay } from '@/utils/calculations';
 import { PrayerLog } from '@/types';
 import clsx from 'clsx';
 import { Ionicons } from '@expo/vector-icons';
+import { useRTL } from '@/hooks/useRTL';
 
 const LogsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { logs, addLog, editLog, removeLog, settings } = useAppContext();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<PrayerLog | null>(null);
+  const { isRTL, writingDirection, textAlign } = useRTL();
 
   const groupedLogs = useMemo(() => groupLogsByDate(logs), [logs]);
   const dates = useMemo(
@@ -84,10 +86,12 @@ const LogsScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <View className="mb-4 flex-row items-center justify-between">
-        <View className="flex-1 pr-4">
+      <View className={clsx('mb-4 items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+        <View className="flex-1" style={{ paddingEnd: 16 }}>
           <Heading className="text-2xl">{t('logs.title')}</Heading>
-          <Body className="mt-1 text-olive/70">{t('logs.subtitle')}</Body>
+          <Body className="mt-1 text-olive/70" style={{ textAlign }}>
+            {t('logs.subtitle')}
+          </Body>
         </View>
         <Button title={t('logs.add')} onPress={handleAdd} size="compact" fullWidth={false} />
       </View>
@@ -98,19 +102,23 @@ const LogsScreen: React.FC = () => {
             <Pressable
               onPress={() => setShowDatePicker(true)}
               className={clsx(
-                'mb-4 flex-row items-center justify-between rounded-2xl border px-4 py-3',
+                'mb-4 items-center justify-between rounded-2xl border px-4 py-3',
+                isRTL ? 'flex-row-reverse' : 'flex-row',
                 isDark ? 'border-white/10 bg-white/5' : 'border-olive/20 bg-white/70 shadow-sm shadow-black/5'
               )}
               accessibilityRole="button"
               accessibilityLabel={t('logs.filterLabel')}
             >
-              <View className="flex-row items-center gap-3">
+              <View className={clsx('items-center gap-3', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                 <Ionicons
                   name="calendar-outline"
                   size={18}
                   color={isDark ? '#f4f4f5' : '#3e4c41'}
                 />
-                <Text className={clsx('font-semibold', isDark ? 'text-white' : 'text-teal')}>
+                <Text
+                  className={clsx('font-semibold', isDark ? 'text-white' : 'text-teal', isRTL ? 'text-right' : 'text-left')}
+                  style={{ writingDirection }}
+                >
                   {dateLabel}
                 </Text>
               </View>
@@ -127,16 +135,17 @@ const LogsScreen: React.FC = () => {
               animationType="fade"
               onRequestClose={() => setShowDatePicker(false)}
             >
-              <View className="flex-1 justify-end bg-black/40">
+              <View className="flex-1 justify-end bg-black/40" style={{ writingDirection }}>
                 <Pressable className="flex-1" onPress={() => setShowDatePicker(false)} accessible={false} />
                 <View
-                  className={clsx(
-                    'rounded-t-3xl px-5 pb-6 pt-4',
-                    isDark ? 'bg-[#1f2429]' : 'bg-white'
-                  )}
+                  className={clsx('rounded-t-3xl px-5 pb-6 pt-4', isDark ? 'bg-[#1f2429]' : 'bg-white')}
+                  style={{ writingDirection }}
                 >
-                  <View className="mb-3 flex-row items-center justify-between">
-                    <Text className={clsx('text-lg font-semibold', isDark ? 'text-white' : 'text-teal')}>
+                  <View className={clsx('mb-3 items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+                    <Text
+                      className={clsx('text-lg font-semibold', isDark ? 'text-white' : 'text-teal', isRTL ? 'text-right' : 'text-left')}
+                      style={{ writingDirection }}
+                    >
                       {t('logs.filterLabel')}
                     </Text>
                   </View>
@@ -151,7 +160,8 @@ const LogsScreen: React.FC = () => {
                             key={value}
                             onPress={() => handleSelectDate(value)}
                             className={clsx(
-                              'flex-row items-center justify-between rounded-2xl px-4 py-3',
+                              'items-center justify-between rounded-2xl px-4 py-3',
+                              isRTL ? 'flex-row-reverse' : 'flex-row',
                               active
                                 ? isDark
                                   ? 'bg-teal/30'
@@ -170,8 +180,10 @@ const LogsScreen: React.FC = () => {
                                     : 'text-white/70'
                                   : active
                                   ? 'text-teal'
-                                  : 'text-olive/70'
+                                  : 'text-olive/70',
+                                isRTL ? 'text-right' : 'text-left'
                               )}
+                              style={{ writingDirection }}
                             >
                               {label}
                             </Text>
@@ -195,17 +207,28 @@ const LogsScreen: React.FC = () => {
 
         {dates.length === 0 && (
           <Card className="items-center">
-            <Body className="text-center text-olive/70">{t('logs.empty')}</Body>
+            <Body className="text-center text-olive/70" style={{ textAlign: 'center' }}>
+              {t('logs.empty')}
+            </Body>
           </Card>
         )}
 
         {filteredDates.map((date) => (
           <Card key={date} className="space-y-4 border border-olive/15 dark:border-white/10">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60">
+            <View className={clsx('items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+              <Text
+                className={clsx(
+                  'text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60',
+                  isRTL ? 'text-right' : 'text-left'
+                )}
+                style={{ writingDirection }}
+              >
                 {dayjs(date).format('MMM D, YYYY')}
               </Text>
-              <Text className="text-xs font-medium text-olive/70 dark:text-white/70">
+              <Text
+                className={clsx('text-xs font-medium text-olive/70 dark:text-white/70', isRTL ? 'text-left' : 'text-right')}
+                style={{ writingDirection }}
+              >
                 {t('logs.totalForDay', { count: groupedLogs[date].length })}
               </Text>
             </View>
@@ -235,22 +258,36 @@ const LogsScreen: React.FC = () => {
                       'rounded-2xl border p-3',
                       isDark ? 'border-white/10 bg-white/5' : 'border-olive/20 bg-white/70'
                     )}
+                    style={{ writingDirection }}
                   >
-                    <View className="flex-row items-center justify-between">
+                    <View className={clsx('items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                       <Body className="font-semibold">{t(`prayers.${log.prayer}`)}</Body>
-                      <Text className="text-xs font-semibold uppercase tracking-wide text-olive/70 dark:text-white/60">
+                      <Text
+                        className={clsx(
+                          'text-xs font-semibold uppercase tracking-wide text-olive/70 dark:text-white/60',
+                          isRTL ? 'text-left' : 'text-right'
+                        )}
+                        style={{ writingDirection }}
+                      >
                         {formatTimeForDisplay(log.loggedAt)}
                       </Text>
                     </View>
-                    <View className="mt-2 flex-row items-center justify-between">
-                      <View className="flex-row items-center gap-2">
+                    <View className={clsx('mt-2 items-center justify-between', isRTL ? 'flex-row-reverse' : 'flex-row')}>
+                      <View className={clsx('items-center gap-2', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                         <View className={clsx('rounded-full px-3 py-1', badgeBackground)}>
-                          <Text className={clsx('text-xs font-semibold uppercase tracking-wide', badgeText)}>
+                          <Text
+                            className={clsx(
+                              'text-xs font-semibold uppercase tracking-wide',
+                              badgeText,
+                              isRTL ? 'text-right' : 'text-left'
+                            )}
+                            style={{ writingDirection }}
+                          >
                             {t(`logs.badge${log.type === 'current' ? 'Current' : 'Qada'}`)} · {log.count}
                           </Text>
                         </View>
                       </View>
-                      <View className="flex-row items-center gap-2">
+                      <View className={clsx('items-center gap-2', isRTL ? 'flex-row-reverse' : 'flex-row')}>
                         <Pressable
                           accessibilityRole="button"
                           accessibilityLabel={t('logs.edit')}
