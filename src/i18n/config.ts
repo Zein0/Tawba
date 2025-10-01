@@ -341,5 +341,6 @@ i18n.use(initReactI18next).init({
 // Set initial RTL support
 import { I18nManager } from 'react-native';
 I18nManager.allowRTL(true);
+I18nManager.swapLeftAndRightInRTL(true);
 
 export default i18n;

@@ -1,16 +1,26 @@
-import { I18nManager } from 'react-native';
+import { useEffect } from 'react';
+import { I18nManager, Platform } from 'react-native';
 import { useAppContext } from '@/contexts/AppContext';
 
 export const useRTL = () => {
   const { settings } = useAppContext();
   const isRTL = settings?.language === 'ar';
-  
-  // Update I18nManager when language changes (for native RTL support)
-  if (I18nManager.isRTL !== isRTL) {
+
+  useEffect(() => {
+    // Ensure native components honour RTL on both platforms
     I18nManager.allowRTL(true);
-    // Note: We don't use forceRTL as it requires app restart
-  }
-  
+    I18nManager.swapLeftAndRightInRTL(true);
+
+    // iOS ignores `swapLeftAndRightInRTL` for some primitives unless the
+    // interface direction matches the desired layout. We rely on our custom
+    // helpers for layout mirroring, so only flip the global layout when the
+    // platform already matches the requested direction to avoid forcing a
+    // reload.
+    if (Platform.OS === 'ios' && I18nManager.isRTL !== isRTL) {
+      I18nManager.forceRTL(isRTL);
+    }
+  }, [isRTL]);
+
   return {
     isRTL,
     // Direction helpers

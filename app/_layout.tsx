@@ -16,7 +16,7 @@ const SyncLanguage: React.FC = () => {
     // Enable RTL support without forcing restart
     const shouldUseRTL = settings.language === 'ar';
     I18nManager.allowRTL(true);
-    // Don't use forceRTL as it requires restart - we'll handle RTL in components
+    I18nManager.swapLeftAndRightInRTL(true);
   }, [settings?.language]);
 
   useEffect(() => {
