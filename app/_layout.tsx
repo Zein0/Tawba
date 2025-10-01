@@ -4,6 +4,7 @@ import { I18nManager, StatusBar } from 'react-native';
 import { AppProvider, useAppContext } from '@/contexts/AppContext';
 import '@/i18n/config';
 import i18n from '@/i18n/config';
+import { checkAppVersion } from '@/utils/appVersion';
 
 const SyncLanguage: React.FC = () => {
   const { settings } = useAppContext();
@@ -35,6 +36,13 @@ const SyncLanguage: React.FC = () => {
 
 const RootLayoutInner: React.FC = () => {
   const { settings, loading } = useAppContext();
+
+  useEffect(() => {
+    if (!loading) {
+      checkAppVersion();
+    }
+  }, [loading]);
+
   if (loading) {
     return null;
   }
