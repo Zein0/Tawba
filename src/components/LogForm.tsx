@@ -36,7 +36,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
   const { t } = useTranslation();
   const { settings } = useAppContext();
   const rtl = useRTL();
-  const [prayer, setPrayer] = useState<PrayerName>('fajr');
+  const [prayer, setPrayer] = useState<PrayerName>('asr');
   const [type, setType] = useState<PrayerType>('current');
   const [count, setCount] = useState('1');
   const [date, setDate] = useState(todayISO());
@@ -50,7 +50,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
       setDate(initial.date);
       setTime(initial.loggedAt);
     } else {
-      setPrayer('fajr');
+      setPrayer('asr');
       setType('current');
       setCount('1');
       setDate(todayISO());
@@ -100,8 +100,8 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
     }
   }, [settings?.fontSize]);
 
-  const placeholderColor = settings?.theme === 'dark' ? '#9ca3af' : '#94a38c';
-  const borderMuted = settings?.theme === 'dark' ? 'border-white/10' : 'border-olive/20';
+  const placeholderColor = '#94a38c';
+  const borderMuted = 'border-olive/20';
 
   const handleCountChange = (value: string) => {
     setCount(value.replace(/[^0-9]/g, ''));
@@ -116,68 +116,62 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 justify-end bg-black/40">
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            className="w-full"
-          >
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onDismiss}>
+      <View className="flex-1 justify-end bg-black/40">
+        <TouchableWithoutFeedback onPress={onDismiss}>
+          <View className="flex-1" />
+        </TouchableWithoutFeedback>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          className="w-full"
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View
               style={{ maxHeight: SHEET_MAX_HEIGHT }}
-              className={clsx(
-                'rounded-t-3xl bg-white/95 px-5 pt-5 pb-6 shadow-2xl',
-                settings?.theme === 'dark' && 'bg-[#1f2429]/95'
-              )}
+              className="rounded-t-3xl bg-white/95 px-5 pt-5 pb-6 shadow-2xl"
             >
               <ScrollView
                 contentContainerStyle={{ paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
               >
-                <Text
-                  className={clsx(
-                    'mb-1 text-xl font-semibold text-teal',
-                    settings?.theme === 'dark' && 'text-white'
-                  )}
-                >
+                <Text className="mb-1 text-xl font-semibold text-teal">
                   {initial ? t('logs.edit') : t('logs.add')}
                 </Text>
-                <Text className={clsx('text-sm text-olive/70', settings?.theme === 'dark' && 'text-white/70')}>
+                <Text className="text-sm text-olive/70">
                   {t('logs.save')}
                 </Text>
 
                 <View className="mt-5 gap-4">
                   <View className="gap-2.5">
-                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                    <Text className="text-xs uppercase tracking-wider text-olive/70">
                       {t('logs.prayerLabel')}
                     </Text>
                     <View
                       className={clsx(
                         'overflow-hidden rounded-2xl border bg-white/80',
-                        borderMuted,
-                        settings?.theme === 'dark' && 'bg-white/5'
+                        borderMuted
                       )}
                     >
                       <Picker 
                         selectedValue={prayer} 
                         onValueChange={(value) => setPrayer(value)}
                         style={{
-                          height: Platform.OS === 'ios' ? 120 : undefined,
+                          height: Platform.OS === 'ios' ? 110 : undefined,
                         }}
                         itemStyle={Platform.OS === 'ios' ? {
-                          height: 120,
-                          fontSize: 16,
+                          height: 110,
+                          fontSize: 14,
                         } : undefined}
                       >
                         {PRAYER_ORDER.map((p) => (
-                          <Picker.Item key={p} label={t(`prayers.${p}`)} value={p} />
+                          <Picker.Item key={p} label={t(`prayers.${p}`)} value={p} color={'#000'} />
                         ))}
                       </Picker>
                     </View>
                   </View>
 
                   <View className="gap-2.5">
-                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                    <Text className="text-xs uppercase tracking-wider text-olive/70">
                       {t('logs.typeLabel')}
                     </Text>
                     <View className={clsx("gap-2", rtl.flexDirection)}>
@@ -190,11 +184,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                             className={clsx(
                               'flex-1 rounded-2xl border px-4 py-2.5',
                               active
-                                ? settings?.theme === 'dark'
-                                  ? 'border-teal bg-teal'
-                                  : 'border-olive bg-olive'
-                                : settings?.theme === 'dark'
-                                ? 'border-white/10 bg-white/5'
+                                ? 'border-olive bg-olive'
                                 : 'border-olive/20 bg-white/70'
                             )}
                           >
@@ -202,7 +192,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                                 className={clsx(
                                 'text-center font-semibold',
                                 fontSizeClass,
-                                active ? 'text-white' : settings?.theme === 'dark' ? 'text-white' : 'text-teal'
+                                active ? 'text-white' : 'text-teal'
                               )}
                             >
                               {t(`logs.type${option === 'current' ? 'Current' : 'Qada'}`)}
@@ -216,7 +206,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                   <View className={clsx("gap-4", rtl.flexDirection)}>
                     {type === 'qada' ? (
                       <View className="flex-1 gap-2.5">
-                        <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                        <Text className="text-xs uppercase tracking-wider text-olive/70">
                           {t('logs.countLabel')}
                         </Text>
                         <TextInput
@@ -228,31 +218,29 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                           placeholderTextColor={placeholderColor}
                           className={clsx(
                             'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
-                            borderMuted,
-                            settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                            borderMuted
                           )}
                         />
                       </View>
                     ) : (
                       <View className="flex-1 gap-2.5">
-                        <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                        <Text className="text-xs uppercase tracking-wider text-olive/70">
                           {t('logs.countLabel')}
                         </Text>
                         <View
                           className={clsx(
                             'rounded-2xl border px-4 py-2.5',
-                            borderMuted,
-                            settings?.theme === 'dark' && 'bg-white/5'
+                            borderMuted
                           )}
                         >
-                          <Text className={clsx('text-teal', settings?.theme === 'dark' && 'text-white')}>
+                          <Text className="text-teal">
                             {t('logs.singleCount')}
                           </Text>
                         </View>
                       </View>
                     )}
                     <View className="flex-1 gap-2.5">
-                      <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                      <Text className="text-xs uppercase tracking-wider text-olive/70">
                         {t('logs.timeLabel')}
                       </Text>
                       <TextInput
@@ -262,15 +250,14 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                           placeholderTextColor={placeholderColor}
                           className={clsx(
                           'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
-                            borderMuted,
-                            settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                            borderMuted
                           )}
                       />
                     </View>
                   </View>
 
                   <View className="gap-2.5">
-                    <Text className={clsx('text-xs uppercase tracking-wider text-olive/70', settings?.theme === 'dark' && 'text-white/60')}>
+                    <Text className="text-xs uppercase tracking-wider text-olive/70">
                       {t('logs.dateLabel')}
                     </Text>
                     <TextInput
@@ -280,8 +267,7 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                       placeholderTextColor={placeholderColor}
                       className={clsx(
                         'rounded-2xl border px-4 py-2.5 text-teal shadow-sm',
-                        borderMuted,
-                        settings?.theme === 'dark' && 'bg-white/5 text-white shadow-none'
+                        borderMuted
                       )}
                     />
                   </View>
@@ -302,9 +288,9 @@ export const LogForm: React.FC<LogFormProps> = ({ visible, onClose, onSubmit, in
                 </View>
               </ScrollView>
             </View>
-          </KeyboardAvoidingView>
-        </View>
-      </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };

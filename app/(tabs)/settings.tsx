@@ -17,7 +17,6 @@ const SettingsScreen: React.FC = () => {
     settings,
     setLanguage,
     setFontSize,
-    setTheme,
     setRemindersEnabled,
     updateLocation,
     resetApp
@@ -34,10 +33,6 @@ const SettingsScreen: React.FC = () => {
 
   const handleFontSize = async (size: 'small' | 'medium' | 'large') => {
     await setFontSize(size);
-  };
-
-  const handleTheme = async (theme: 'light' | 'dark' | 'system') => {
-    await setTheme(theme);
   };
 
   const handleReminders = async (enabled: boolean) => {
@@ -113,10 +108,10 @@ const SettingsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <Card>
-          <Heading className="mb-4">{t('settings.title')}</Heading>
+          <Heading className={clsx("mb-4", rtl.textAlign)}>{t('settings.title')}</Heading>
 
         <View className="mb-6">
-          <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.language')}</Body>
+          <Body className={clsx("mb-2 uppercase text-xs tracking-wide text-olive/70", rtl.textAlign)}>{t('settings.language')}</Body>
           <View className={clsx("gap-3", rtl.flexDirection)}>
             <View className="flex-1">
               <Button
@@ -136,7 +131,7 @@ const SettingsScreen: React.FC = () => {
         </View>
 
         <View className="mb-6">
-          <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.fontSize')}</Body>
+          <Body className={clsx("mb-2 uppercase text-xs tracking-wide text-olive/70", rtl.textAlign)}>{t('settings.fontSize')}</Body>
           <View className={clsx("gap-3", rtl.flexDirection)}>
             {(['small', 'medium', 'large'] as const).map((size) => (
               <View className="flex-1" key={size}>
@@ -150,25 +145,10 @@ const SettingsScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* <View className="mb-6">
-          <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.theme')}</Body>
-          <View className="flex-row gap-3">
-            {(['light', 'dark', 'system'] as const).map((theme) => (
-              <View className="flex-1" key={theme}>
-                <Button
-                  title={t(`settings.${theme}`)}
-                  variant={settings?.theme === theme ? 'primary' : 'secondary'}
-                  onPress={() => handleTheme(theme)}
-                />
-              </View>
-            ))}
-          </View>
-        </View> */}
-
         <View className="mb-6">
-          <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.reminders')}</Body>
+          <Body className={clsx("mb-2 uppercase text-xs tracking-wide text-olive/70", rtl.textAlign)}>{t('settings.reminders')}</Body>
           <View className={clsx("items-center justify-between rounded-2xl bg-olive/10 px-4 py-4", rtl.flexDirection)}>
-            <Body>{t('settings.enableReminders')}</Body>
+            <Body className={rtl.textAlign}>{t('settings.enableReminders')}</Body>
             <Switch
               value={settings?.remindersEnabled}
               onValueChange={handleReminders}
@@ -178,12 +158,12 @@ const SettingsScreen: React.FC = () => {
         </View>
 
         <View className="mb-4">
-          <Body className="mb-2 uppercase text-xs tracking-wide text-olive/70">{t('settings.location')}</Body>
+          <Body className={clsx("mb-2 uppercase text-xs tracking-wide text-olive/70", rtl.textAlign)}>{t('settings.location')}</Body>
           <View className="rounded-2xl bg-olive/10 px-4 py-4">
-            <Body className="mb-3">{t('settings.updateLocation')}</Body>
+            <Body className={clsx("mb-3", rtl.textAlign)}>{t('settings.updateLocation')}</Body>
             <Button title={locLoading ? '...' : t('settings.updateLocation')} onPress={refreshLocation} />
             {settings?.location && (
-              <Text className="mt-2 text-olive/70">
+              <Text className={clsx("mt-2 text-olive/70", rtl.textAlign)}>
                 {resolvingLocation
                   ? t('settings.resolvingLocation')
                   : locationLabel ??
@@ -194,8 +174,8 @@ const SettingsScreen: React.FC = () => {
         </View>
 
           <View className="rounded-2xl bg-red-50 px-4 py-5">
-            <Heading className="mb-2 text-lg text-red-600">{t('settings.resetDataTitle')}</Heading>
-            <Body className="mb-4 text-red-500">{t('settings.resetDataDescription')}</Body>
+            <Heading className={clsx("mb-2 text-lg text-red-600", rtl.textAlign)}>{t('settings.resetDataTitle')}</Heading>
+            <Body className={clsx("mb-4 text-red-500", rtl.textAlign)}>{t('settings.resetDataDescription')}</Body>
             <Button title={t('settings.resetButton')} variant="secondary" onPress={handleReset} />
           </View>
         </Card>

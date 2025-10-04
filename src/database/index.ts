@@ -10,7 +10,6 @@ const settingKeyMap: Record<keyof Settings, string> = {
   fontSize: 'font_size',
   startDate: 'start_date',
   remindersEnabled: 'reminders_enabled',
-  theme: 'theme',
   location: 'location'
 };
 
@@ -44,8 +43,6 @@ const deserializeSettingValue = (key: keyof Settings, value: string | null) => {
       return value as Settings['fontSize'];
     case 'language':
       return value as Settings['language'];
-    case 'theme':
-      return value as Settings['theme'];
     default:
       return value;
   }
@@ -87,7 +84,6 @@ export const initializeDatabase = async () => {
     fontSize: 'medium',
     startDate: null,
     remindersEnabled: true,
-    theme: 'light',
     location: null
   };
 

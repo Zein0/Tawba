@@ -11,12 +11,9 @@ export const useRTL = () => {
     I18nManager.allowRTL(true);
     I18nManager.swapLeftAndRightInRTL(true);
 
-    // iOS ignores `swapLeftAndRightInRTL` for some primitives unless the
-    // interface direction matches the desired layout. We rely on our custom
-    // helpers for layout mirroring, so only flip the global layout when the
-    // platform already matches the requested direction to avoid forcing a
-    // reload.
-    if (Platform.OS === 'ios' && I18nManager.isRTL !== isRTL) {
+    // Force RTL direction based on language
+    // Note: forceRTL may require app reload on some platforms
+    if (I18nManager.isRTL !== isRTL) {
       I18nManager.forceRTL(isRTL);
     }
   }, [isRTL]);

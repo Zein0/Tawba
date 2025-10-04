@@ -5,14 +5,12 @@ import { useAppContext } from '@/contexts/AppContext';
 import { useRTL } from '@/hooks/useRTL';
 
 export const Heading: React.FC<TextProps> = ({ children, className, ...rest }) => {
-  const { settings } = useAppContext();
   const rtl = useRTL();
   return (
     <Text
       {...rest}
       className={clsx(
         'font-semibold text-2xl text-teal',
-        settings?.theme === 'dark' && 'text-white',
         rtl.textAlign,
         className
       )}
@@ -30,7 +28,6 @@ export const Body: React.FC<TextProps> = ({ children, className, ...rest }) => {
       {...rest}
       className={clsx(
         'text-base text-teal/80',
-        settings?.theme === 'dark' && 'text-white/80',
         settings?.fontSize === 'small' && 'text-sm',
         settings?.fontSize === 'large' && 'text-lg',
         rtl.textAlign,

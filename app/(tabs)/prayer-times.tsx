@@ -27,9 +27,7 @@ const PrayerTimesScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { prayerTimes, loadingLocation, error, locationDetails, nextPrayer, refreshNextPrayer } = usePrayerTimes();
-  const { settings } = useAppContext();
   const rtl = useRTL();
-  const isDark = settings?.theme === 'dark';
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,11 +38,11 @@ const PrayerTimesScreen: React.FC = () => {
   return (
     <ScreenContainer>
       <Card>
-        <Heading className="mb-2 text-2xl">{t('prayerTimes.title')}</Heading>
+        <Heading className={clsx("mb-2 text-2xl", rtl.textAlign)}>{t('prayerTimes.title')}</Heading>
         {locationDetails?.formatted ? (
-          <Body className="text-olive/80">{t('prayerTimes.location', { location: locationDetails.formatted })}</Body>
+          <Body className={clsx("text-olive/80", rtl.textAlign)}>{t('prayerTimes.location', { location: locationDetails.formatted })}</Body>
         ) : (
-          <Body className="text-olive/80">{t('prayerTimes.locationUnknown')}</Body>
+          <Body className={clsx("text-olive/80", rtl.textAlign)}>{t('prayerTimes.locationUnknown')}</Body>
         )}
 
         <View className="my-5 rounded-3xl bg-white/60 p-4 shadow-sm shadow-black/5">
@@ -55,7 +53,7 @@ const PrayerTimesScreen: React.FC = () => {
             </View>
           ) : error ? (
             <View className="py-4">
-              <Body className="text-red-500">{t(`prayerTimes.errors.${error}`)}</Body>
+              <Body className={clsx("text-red-500", rtl.textAlign)}>{t(`prayerTimes.errors.${error}`)}</Body>
             </View>
           ) : (
             PRAYER_ORDER.map((prayer) => {
@@ -69,8 +67,6 @@ const PrayerTimesScreen: React.FC = () => {
                     'mb-3 rounded-2xl px-4 py-3',
                     isNext
                       ? 'border border-teal/40 bg-teal/10'
-                      : isDark
-                      ? 'bg-white/5'
                       : 'bg-white/40'
                   )}
                 >
@@ -79,30 +75,31 @@ const PrayerTimesScreen: React.FC = () => {
                       <View
                         className={clsx(
                           'rounded-2xl p-2',
-                          isNext ? 'bg-teal/20' : isDark ? 'bg-white/10' : 'bg-olive/20'
+                          isNext ? 'bg-teal/20' : 'bg-olive/20'
                         )}
                       >
                         <Ionicons
                           name={PRAYER_ICONS[prayer]}
                           size={20}
-                          color={isNext ? '#0f766e' : isDark ? '#f8fafc' : '#3f4f43'}
+                          color={isNext ? '#0f766e' : '#3f4f43'}
                         />
                       </View>
                       <Body
                         className={clsx(
                           'font-semibold',
-                          isNext ? 'text-teal' : 'text-teal/90 dark:text-white'
+                          rtl.textAlign,
+                          isNext ? 'text-teal' : 'text-teal/90'
                         )}
                       >
                         {t(`prayers.${prayer}`)}
                       </Body>
                     </View>
-                    <View className="items-end">
-                      <Body className="text-lg font-semibold text-teal dark:text-white">
+                    <View className={clsx(rtl.isRTL ? 'items-start' : 'items-end')}>
+                      <Body className={clsx("text-lg font-semibold text-teal", rtl.textAlign)}>
                         {dayjs(entry.time).format('h:mm A')}
                       </Body>
                       {isNext && (
-                        <Body className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal">
+                        <Body className={clsx("mt-1 text-xs font-semibold uppercase tracking-wide text-teal", rtl.textAlign)}>
                           {t('prayerTimes.upNext')}
                         </Body>
                       )}
@@ -114,7 +111,7 @@ const PrayerTimesScreen: React.FC = () => {
           )}
         </View>
 
-        <Body className="mb-4 text-olive/70">{t('prayerTimes.updateHint')}</Body>
+        <Body className={clsx("mb-4 text-olive/70", rtl.textAlign)}>{t('prayerTimes.updateHint')}</Body>
         <Button
           title={t('prayerTimes.manageLocation')}
           variant="secondary"

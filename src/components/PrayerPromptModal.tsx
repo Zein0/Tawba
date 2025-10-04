@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, View, Text, TextInput } from 'react-native';
+import { Alert, Modal, View, Text, TextInput, Pressable } from 'react-native';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/Button';
@@ -62,12 +62,12 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
   };
 
   return (
-    <Modal visible animationType="fade" transparent>
-      <View className="flex-1 bg-black/50 justify-center px-6">
-        <View className={clsx('rounded-3xl p-6', settings?.theme === 'dark' ? 'bg-[#1f2429]' : 'bg-white')}>
+    <Modal visible animationType="fade" transparent onRequestClose={onClose}>
+      <Pressable className="flex-1 bg-black/50 justify-center px-6" onPress={onClose}>
+        <Pressable className="rounded-3xl p-6 bg-white" onPress={(e) => e.stopPropagation()}>
           {step === 'question' ? (
             <>
-              <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
+              <Text className="text-lg font-semibold text-teal">
                 {t('notifications.question', { prayer: prayerLabel })}
               </Text>
               <View className="mt-5 gap-3">
@@ -78,17 +78,14 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
             </>
           ) : (
             <>
-              <Text className={clsx('text-lg font-semibold text-teal', settings?.theme === 'dark' && 'text-white')}>
+              <Text className="text-lg font-semibold text-teal">
                 {t('notifications.qadaQuestion')}
               </Text>
               <TextInput
                 keyboardType="number-pad"
                 value={count}
                 onChangeText={setCount}
-                className={clsx(
-                  'mt-4 rounded-2xl border border-olive/30 px-4 py-3 text-teal',
-                  settings?.theme === 'dark' && 'border-white/20 text-white'
-                )}
+                className="mt-4 rounded-2xl border border-olive/30 px-4 py-3 text-teal"
               />
               <View className="mt-5 gap-3">
                 <Button title={t('notifications.submit')} onPress={handleQadaSubmit} />
@@ -96,8 +93,8 @@ export const PrayerPromptModal: React.FC<PrayerPromptModalProps> = ({
               </View>
             </>
           )}
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };

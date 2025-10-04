@@ -28,7 +28,6 @@ const LogsScreen: React.FC = () => {
   );
   const [selectedDate, setSelectedDate] = useState<'all' | string>('all');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const isDark = settings?.theme === 'dark';
 
   useEffect(() => {
     if (selectedDate !== 'all' && !dates.includes(selectedDate)) {
@@ -102,7 +101,7 @@ const LogsScreen: React.FC = () => {
               className={clsx(
                 'mb-4 items-center justify-between rounded-2xl border px-4 py-3',
                 rtl.flexDirection,
-                isDark ? 'border-white/10 bg-white/5' : 'border-olive/20 bg-white/70 shadow-sm shadow-black/5'
+                'border-olive/20 bg-white/70 shadow-sm shadow-black/5'
               )}
               accessibilityRole="button"
               accessibilityLabel={t('logs.filterLabel')}
@@ -111,16 +110,16 @@ const LogsScreen: React.FC = () => {
                 <Ionicons
                   name="calendar-outline"
                   size={18}
-                  color={isDark ? '#f4f4f5' : '#3e4c41'}
+                  color="#3e4c41"
                 />
-                <Text className={clsx('font-semibold', isDark ? 'text-white' : 'text-teal')}>
+                <Text className="font-semibold text-teal">
                   {dateLabel}
                 </Text>
               </View>
               <Ionicons
                 name="chevron-down"
                 size={18}
-                color={isDark ? '#e5e7eb' : '#6b7a70'}
+                color="#6b7a70"
               />
             </Pressable>
 
@@ -132,14 +131,9 @@ const LogsScreen: React.FC = () => {
             >
               <View className="flex-1 justify-end bg-black/40">
                 <Pressable className="flex-1" onPress={() => setShowDatePicker(false)} accessible={false} />
-                <View
-                  className={clsx(
-                    'rounded-t-3xl px-5 pb-6 pt-4',
-                    isDark ? 'bg-[#1f2429]' : 'bg-white'
-                  )}
-                >
+                <View className="rounded-t-3xl px-5 pb-6 pt-4 bg-white">
                   <View className={clsx("mb-3 items-center justify-between", rtl.flexDirection)}>
-                    <Text className={clsx('text-lg font-semibold', isDark ? 'text-white' : 'text-teal')}>
+                    <Text className="text-lg font-semibold text-teal">
                       {t('logs.filterLabel')}
                     </Text>
                   </View>
@@ -156,25 +150,13 @@ const LogsScreen: React.FC = () => {
                             className={clsx(
                               'items-center justify-between rounded-2xl px-4 py-3',
                               rtl.flexDirection,
-                              active
-                                ? isDark
-                                  ? 'bg-teal/30'
-                                  : 'bg-olive/15'
-                                : isDark
-                                ? 'bg-white/5'
-                                : 'bg-white'
+                              active ? 'bg-olive/15' : 'bg-white'
                             )}
                           >
                             <Text
                               className={clsx(
                                 'font-medium',
-                                isDark
-                                  ? active
-                                    ? 'text-white'
-                                    : 'text-white/70'
-                                  : active
-                                  ? 'text-teal'
-                                  : 'text-olive/70'
+                                active ? 'text-teal' : 'text-olive/70'
                               )}
                             >
                               {label}
@@ -183,7 +165,7 @@ const LogsScreen: React.FC = () => {
                               <Ionicons
                                 name="checkmark"
                                 size={18}
-                                color={isDark ? '#22d3ee' : '#2f7a55'}
+                                color="#2f7a55"
                               />
                             )}
                           </Pressable>
@@ -204,45 +186,30 @@ const LogsScreen: React.FC = () => {
         )}
 
         {filteredDates.map((date) => (
-          <Card key={date} className="space-y-4 border border-olive/15 dark:border-white/10">
+          <Card key={date} className="space-y-4 border border-olive/15">
             <View className={clsx("items-center justify-between", rtl.flexDirection)}>
-              <Text className={clsx("text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60", rtl.textAlign)}>
+              <Text className={clsx("text-xs uppercase tracking-[2px] text-olive/60", rtl.textAlign)}>
                 {dayjs(date).format('MMM D, YYYY')}
               </Text>
-              <Text className="text-xs font-medium text-olive/70 dark:text-white/70">
+              <Text className="text-xs font-medium text-olive/70">
                 {t('logs.totalForDay', { count: groupedLogs[date].length })}
               </Text>
             </View>
             <View className="space-y-3">
               {groupedLogs[date].map((log) => {
                 const badgeBackground =
-                  log.type === 'current'
-                    ? isDark
-                      ? 'bg-emerald-500/20'
-                      : 'bg-emerald-500/10'
-                    : isDark
-                    ? 'bg-amber-500/20'
-                    : 'bg-amber-500/10';
+                  log.type === 'current' ? 'bg-emerald-500/10' : 'bg-amber-500/10';
                 const badgeText =
-                  log.type === 'current'
-                    ? isDark
-                      ? 'text-emerald-200'
-                      : 'text-emerald-600'
-                    : isDark
-                    ? 'text-amber-200'
-                    : 'text-amber-600';
+                  log.type === 'current' ? 'text-emerald-600' : 'text-amber-600';
 
                 return (
                   <View
                     key={log.id}
-                    className={clsx(
-                      'rounded-2xl border p-3',
-                      isDark ? 'border-white/10 bg-white/5' : 'border-olive/20 bg-white/70'
-                    )}
+                    className="rounded-2xl border border-olive/20 bg-white/70 p-3"
                   >
                     <View className={clsx("items-center justify-between", rtl.flexDirection)}>
                       <Body className="font-semibold">{t(`prayers.${log.prayer}`)}</Body>
-                      <Text className={clsx("text-xs font-semibold uppercase tracking-wide text-olive/70 dark:text-white/60", rtl.textAlign)}>
+                      <Text className={clsx("text-xs font-semibold uppercase tracking-wide text-olive/70", rtl.textAlign)}>
                         {formatTimeForDisplay(log.loggedAt)}
                       </Text>
                     </View>
@@ -259,24 +226,24 @@ const LogsScreen: React.FC = () => {
                           accessibilityRole="button"
                           accessibilityLabel={t('logs.edit')}
                           onPress={() => handleEdit(log)}
-                          className={clsx('rounded-full p-2', isDark ? 'bg-white/10' : 'bg-olive/15')}
+                          className="rounded-full p-2 bg-olive/15"
                         >
                           <Ionicons
                             name="create-outline"
                             size={18}
-                            color={isDark ? '#f8fafc' : '#3f4f43'}
+                            color="#3f4f43"
                           />
                         </Pressable>
                         <Pressable
                           accessibilityRole="button"
                           accessibilityLabel={t('logs.delete')}
                           onPress={() => handleDelete(log)}
-                          className={clsx('rounded-full p-2', isDark ? 'bg-red-500/20' : 'bg-red-100')}
+                          className="rounded-full p-2 bg-red-100"
                         >
                           <Ionicons
                             name="trash-outline"
                             size={18}
-                            color={isDark ? '#fca5a5' : '#b91c1c'}
+                            color="#b91c1c"
                           />
                         </Pressable>
                       </View>

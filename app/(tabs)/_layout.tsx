@@ -3,28 +3,29 @@ import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
-import { useAppContext } from '@/contexts/AppContext';
 import { useRTL } from '@/hooks/useRTL';
 
 const TabLayout: React.FC = () => {
   const { t } = useTranslation();
-  const { settings } = useAppContext();
   const rtl = useRTL();
-  const isDark = settings?.theme === 'dark';
 
   return (
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#7a8b71',
-        tabBarInactiveTintColor: isDark ? '#6b7280' : '#9ca3af',
+        tabBarInactiveTintColor: '#9ca3af',
         tabBarStyle: {
-          backgroundColor: isDark ? '#101418' : '#ffffff',
+          backgroundColor: '#ffffff',
           borderTopWidth: 0,
-          height: Platform.OS === 'ios' ? 88 : 72,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 12,
-          paddingTop: Platform.OS === 'ios' ? 16 : 12,
-          flexDirection: rtl.isRTL ? 'row-reverse' : 'row'
+          elevation: 0,
+          shadowOpacity: 0,
+          shadowOffset: { width: 0, height: 0 },
+          shadowRadius: 0,
+          height: Platform.OS === 'ios' ? 72 : 72,
+          paddingBottom: Platform.OS === 'ios' ? 20 : 20,
+          paddingTop: Platform.OS === 'ios' ? 12 : 12,
+          flexDirection: rtl.isRTL ? 'row-reverse' : 'row',
         },
         tabBarIcon: ({ color, size }) => {
           switch (route.name) {

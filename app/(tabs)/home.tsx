@@ -51,23 +51,23 @@ const HomeScreen: React.FC = () => {
   return (
     <ScreenContainer>
       <Card>
-        <Heading className="mb-1">{t('dashboard.greeting')}</Heading>
-        <Body className="mb-4">{dayjs().format('dddd, MMM D')}</Body>
+        <Heading className={clsx("mb-1", rtl.textAlign)}>{t('dashboard.greeting')}</Heading>
+        <Body className={clsx("mb-4", rtl.textAlign)}>{dayjs().format('dddd, MMM D')}</Body>
 
         <View className="mb-6">
-          <Text className="text-sm uppercase tracking-wider text-olive/70 mb-2">
+          <Text className={clsx("text-sm uppercase tracking-wider text-olive/70 mb-2", rtl.textAlign)}>
             {t('dashboard.nextPrayer')}
           </Text>
-          <Text className="text-3xl font-semibold text-teal">
+          <Text className={clsx("text-3xl font-semibold text-teal", rtl.textAlign)}>
             {nextPrayer ? t(`prayers.${nextPrayer.prayer}`) : t('dashboard.nextPrayer')}
           </Text>
           {nextPrayer && (
-            <Body className="mt-2 text-olive/80">
+            <Body className={clsx("mt-2 text-olive/80", rtl.textAlign)}>
               {t('dashboard.nextPrayerAt', { time: dayjs(nextPrayer.time).format('h:mm A') })}
             </Body>
           )}
           {locationDetails?.formatted && (
-            <Body className="mt-2 text-olive/70">
+            <Body className={clsx("mt-2 text-olive/70", rtl.textAlign)}>
               {t('dashboard.locationLine', {
                 location: locationDetails.formatted
               })}
@@ -76,10 +76,10 @@ const HomeScreen: React.FC = () => {
         </View>
 
         <View className="mb-6">
-          <Text className="text-sm uppercase tracking-wider text-olive/70 mb-2">
+          <Text className={clsx("text-sm uppercase tracking-wider text-olive/70 mb-2", rtl.textAlign)}>
             {t('dashboard.totalRemaining')}
           </Text>
-          <Text className="text-3xl font-semibold text-teal">
+          <Text className={clsx("text-3xl font-semibold text-teal", rtl.textAlign)}>
             {totalRemaining(summaries).toLocaleString()}
           </Text>
         </View>
@@ -99,10 +99,10 @@ const HomeScreen: React.FC = () => {
       </Card>
 
       <Card>
-        <Heading className="mb-3 text-xl">{t('dashboard.todaysProgress')}</Heading>
-        <View className={clsx("justify-between", rtl.flexDirection)}>
-          <Body>{t('dashboard.prayed', { count: prayedToday })}</Body>
-          <Body>{t('dashboard.missed', { count: missedToday })}</Body>
+        <Heading className={clsx("mb-3 text-xl", rtl.textAlign)}>{t('dashboard.todaysProgress')}</Heading>
+        <View className={clsx("items-center justify-between", rtl.flexDirection)}>
+          <Body className={rtl.textAlign}>{t('dashboard.prayed', { count: prayedToday })}</Body>
+          <Body className={rtl.textAlign}>{t('dashboard.missed', { count: missedToday })}</Body>
         </View>
       </Card>
 

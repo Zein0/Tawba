@@ -1,5 +1,6 @@
 import { Coordinates, CalculationMethod, PrayerTimes, CalculationParameters, Madhab } from 'adhan';
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import dayjs from 'dayjs';
 import { PrayerName } from '@/types';
 import { PRAYER_ORDER } from '@/constants/prayer';
@@ -17,36 +18,39 @@ const prayerMap: Record<PrayerName, keyof PrayerTimes> = {
   isha: 'isha'
 };
 
-const calculationMethodFactories: Partial<Record<CalculationMethod, () => CalculationParameters>> = {
-  [CalculationMethod.MuslimWorldLeague]: () => CalculationMethod.MuslimWorldLeague(),
-  [CalculationMethod.Egyptian]: () => CalculationMethod.Egyptian(),
-  [CalculationMethod.Karachi]: () => CalculationMethod.Karachi(),
-  [CalculationMethod.UmmAlQura]: () => CalculationMethod.UmmAlQura(),
-  [CalculationMethod.Dubai]: () => CalculationMethod.Dubai(),
-  [CalculationMethod.MoonsightingCommittee]: () => CalculationMethod.MoonsightingCommittee(),
-  [CalculationMethod.NorthAmerica]: () => CalculationMethod.NorthAmerica(),
-  [CalculationMethod.Kuwait]: () => CalculationMethod.Kuwait(),
-  [CalculationMethod.Qatar]: () => CalculationMethod.Qatar(),
-  [CalculationMethod.Singapore]: () => CalculationMethod.Singapore(),
-  [CalculationMethod.Tehran]: () => CalculationMethod.Tehran(),
-  [CalculationMethod.Turkey]: () => CalculationMethod.Turkey(),
-  [CalculationMethod.Other]: () => new CalculationParameters()
+const calculationMethodFactories: Record<string, () => CalculationParameters> = {
+  'MuslimWorldLeague': () => CalculationMethod.MuslimWorldLeague(),
+  'Egyptian': () => CalculationMethod.Egyptian(),
+  'Karachi': () => CalculationMethod.Karachi(),
+  'UmmAlQura': () => CalculationMethod.UmmAlQura(),
+  'Dubai': () => CalculationMethod.Dubai(),
+  'MoonsightingCommittee': () => CalculationMethod.MoonsightingCommittee(),
+  'NorthAmerica': () => CalculationMethod.NorthAmerica(),
+  'Kuwait': () => CalculationMethod.Kuwait(),
+  'Qatar': () => CalculationMethod.Qatar(),
+  'Singapore': () => CalculationMethod.Singapore(),
+  'Tehran': () => CalculationMethod.Tehran(),
+  'Turkey': () => CalculationMethod.Turkey(),
+  'Other': () => new CalculationParameters(null)
 };
 
 export const computePrayerTimes = (
   date: Date,
   coordinates: Coordinates,
-  method: CalculationMethod = CalculationMethod.MuslimWorldLeague
+  method: string = 'MuslimWorldLeague'
 ): PrayerTimeResult[] => {
   const paramsFactory =
-    calculationMethodFactories[method] ?? calculationMethodFactories[CalculationMethod.MuslimWorldLeague];
-  const params: CalculationParameters = paramsFactory ? paramsFactory() : new CalculationParameters();
+    calculationMethodFactories[method] ?? calculationMethodFactories['MuslimWorldLeague'];
+  const params: CalculationParameters = paramsFactory ? paramsFactory() : new CalculationParameters(null);
   params.madhab = Madhab.Hanafi;
   const times = new PrayerTimes(coordinates, date, params);
-  return PRAYER_ORDER.map((prayer) => ({
-    prayer,
-    time: times[prayerMap[prayer]]
-  }));
+  return PRAYER_ORDER.map((prayer) => {
+    const prayerTime = times[prayerMap[prayer]] as Date;
+    return {
+      prayer,
+      time: prayerTime
+    };
+  });
 };
 
 export const schedulePrayerNotifications = async (
@@ -76,7 +80,10 @@ export const schedulePrayerNotifications = async (
         ...content,
         data: { prayer: entry.prayer }
       },
-      trigger: triggerTime.toDate()
+      trigger: {
+        type: SchedulableTriggerInputTypes.DATE,
+        date: triggerTime.toDate()
+      }
     });
   }
 };

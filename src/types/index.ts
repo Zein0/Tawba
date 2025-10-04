@@ -21,7 +21,6 @@ export interface Settings {
   fontSize: 'small' | 'medium' | 'large';
   startDate: string | null;
   remindersEnabled: boolean;
-  theme: 'light' | 'dark' | 'system';
   location?: {
     latitude: number;
     longitude: number;

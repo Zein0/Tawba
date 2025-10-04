@@ -27,18 +27,13 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const { settings } = useAppContext();
   const rtl = useRTL();
-  const isDark = settings?.theme === 'dark';
 
   const containerClasses = clsx(
     'rounded-2xl items-center justify-center shadow-sm',
     fullWidth ? 'w-full' : 'self-auto',
     size === 'compact' ? 'px-4 py-2.5' : 'px-4 py-3',
     variant === 'primary'
-      ? isDark
-        ? 'bg-teal'
-        : 'bg-olive'
-      : isDark
-      ? 'bg-dusk border border-teal'
+      ? 'bg-olive'
       : 'bg-sand border border-olive/40',
     className
   );
@@ -72,7 +67,7 @@ export const Button: React.FC<ButtonProps> = ({
           'font-semibold',
           textSizeClass,
           rtl.textAlign,
-          variant === 'primary' ? 'text-white' : isDark ? 'text-white' : 'text-teal'
+          variant === 'primary' ? 'text-white' : 'text-teal'
         )}
       >
         {title}

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { I18nManager } from 'react-native';
 import {
   adjustMissedEstimate,
   deletePrayerLog,
@@ -14,6 +15,7 @@ import {
 } from '@/database';
 import { MissedEstimate, PrayerLog, PrayerName, PrayerSummary, ProgressProjection, Settings } from '@/types';
 import { buildProjection, summarizePrayers, sortLogs } from '@/utils/calculations';
+import { reloadApp } from '@/utils/reload';
 
 interface AppContextShape {
   loading: boolean;
@@ -27,9 +29,8 @@ interface AppContextShape {
   addLog: (log: Omit<PrayerLog, 'id'>) => Promise<void>;
   editLog: (log: PrayerLog) => Promise<void>;
   removeLog: (id: number) => Promise<void>;
-  setLanguage: (language: Settings['language']) => Promise<void>;
+  setLanguage: (language: Settings['language'], skipReload?: boolean) => Promise<void>;
   setFontSize: (size: Settings['fontSize']) => Promise<void>;
-  setTheme: (theme: Settings['theme']) => Promise<void>;
   setRemindersEnabled: (enabled: boolean) => Promise<void>;
   updateLocation: (location: Settings['location']) => Promise<void>;
   incrementMissed: (prayer: PrayerName, amount?: number) => Promise<void>;
@@ -114,18 +115,34 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     await refresh();
   };
 
-  const setLanguage = async (language: Settings['language']) => {
+  const setLanguage = async (language: Settings['language'], skipReload?: boolean) => {
+    // Save language to database
     await updateSetting('language', language);
-    await refresh();
+
+    // Force RTL direction for the new language
+    const shouldUseRTL = language === 'ar';
+
+    // Check if RTL direction needs to change
+    if (I18nManager.isRTL !== shouldUseRTL) {
+      // Force the new RTL direction
+      I18nManager.forceRTL(shouldUseRTL);
+
+      // Reload the app to apply changes immediately (unless we're on onboarding)
+      if (!skipReload) {
+        setTimeout(() => {
+          reloadApp();
+        }, 100); // Small delay to ensure database write completes
+      } else {
+        await refresh();
+      }
+    } else {
+      // Just refresh if no RTL change needed
+      await refresh();
+    }
   };
 
   const setFontSize = async (size: Settings['fontSize']) => {
     await updateSetting('fontSize', size);
-    await refresh();
-  };
-
-  const setTheme = async (theme: Settings['theme']) => {
-    await updateSetting('theme', theme);
     await refresh();
   };
 
@@ -166,7 +183,6 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     removeLog,
     setLanguage,
     setFontSize,
-    setTheme,
     setRemindersEnabled,
     updateLocation,
     incrementMissed,

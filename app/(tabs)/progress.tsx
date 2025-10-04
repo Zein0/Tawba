@@ -79,16 +79,16 @@ const ProgressScreen: React.FC = () => {
     <ScreenContainer>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <Card>
-          <Heading className="mb-4">{t('progress.title')}</Heading>
+          <Heading className={clsx("mb-4", rtl.textAlign)}>{t('progress.title')}</Heading>
           {summaries.map((summary) => {
             const completed = summary.totalQadaPrayed;
             const target = summary.missedTotal;
             const progress = target > 0 ? Math.min(completed / target, 1) : completed > 0 ? 1 : 0;
             return (
               <View key={summary.prayer} className="mb-5">
-                <View className={clsx("mb-2 justify-between", rtl.flexDirection)}>
-                  <Body className="font-semibold">{t(`prayers.${summary.prayer}`)}</Body>
-                  <Body>
+                <View className={clsx("mb-2 items-center justify-between", rtl.flexDirection)}>
+                  <Body className={clsx("font-semibold", rtl.textAlign)}>{t(`prayers.${summary.prayer}`)}</Body>
+                  <Body className={rtl.textAlign}>
                     {t('progress.repaid', {
                       completed: completed.toLocaleString(),
                       total: target.toLocaleString()
@@ -96,7 +96,7 @@ const ProgressScreen: React.FC = () => {
                   </Body>
                 </View>
                 <ProgressBar progress={progress} />
-                <Body className="mt-1">
+                <Body className={clsx("mt-1", rtl.textAlign)}>
                   {t('dashboard.totalRemaining')}: {summary.remaining.toLocaleString()}
                 </Body>
               </View>
@@ -105,11 +105,11 @@ const ProgressScreen: React.FC = () => {
         </Card>
 
         <Card>
-          <Heading className="mb-3 text-xl">{t('progress.filterTitle')}</Heading>
-          <Body className="mb-5 text-olive/70">{t('progress.filterSubtitle')}</Body>
+          <Heading className={clsx("mb-3 text-xl", rtl.textAlign)}>{t('progress.filterTitle')}</Heading>
+          <Body className={clsx("mb-5 text-olive/70", rtl.textAlign)}>{t('progress.filterSubtitle')}</Body>
 
           <View className="mb-5">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+            <Text className={clsx("mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70", rtl.textAlign)}>
               {t('progress.focusLabel')}
             </Text>
             <View className={clsx("flex-wrap gap-2", rtl.flexDirection)}>
@@ -136,7 +136,7 @@ const ProgressScreen: React.FC = () => {
           </View>
 
           <View className="mb-5">
-            <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70">
+            <Text className={clsx("mb-2 text-xs font-semibold uppercase tracking-wider text-olive/70", rtl.textAlign)}>
               {selectedPrayer === 'all' ? t('progress.perDayLabelAll') : t('progress.perDayLabel')}
             </Text>
             <TextInput
@@ -146,18 +146,19 @@ const ProgressScreen: React.FC = () => {
               inputMode="numeric"
               placeholder="2"
               placeholderTextColor="#a3ad9d"
+              style={rtl.textInputStyle}
               className="rounded-2xl border border-olive/20 px-4 py-3 text-base text-teal"
             />
-            <Body className="mt-2 text-olive/70">{t('progress.perDayHint')}</Body>
+            <Body className={clsx("mt-2 text-olive/70", rtl.textAlign)}>{t('progress.perDayHint')}</Body>
           </View>
 
           <View className="rounded-2xl bg-olive/10 px-4 py-4">
-            <Body className="mb-1 font-semibold text-olive">
+            <Body className={clsx("mb-1 font-semibold text-olive", rtl.textAlign)}>
               {t('progress.remainingLabel', { remaining: remainingForSelection.toLocaleString() })}
             </Body>
             {projectedDate ? (
               <View className="gap-2">
-                <Body>
+                <Body className={rtl.textAlign}>
                   {selectedPrayer === 'all'
                     ? t('progress.projectedDetailedAll', {
                         average: dailyTargetNumber,
@@ -172,9 +173,9 @@ const ProgressScreen: React.FC = () => {
                 </Body>
               </View>
             ) : remainingForSelection === 0 ? (
-              <Body>{t('progress.clearMessage')}</Body>
+              <Body className={rtl.textAlign}>{t('progress.clearMessage')}</Body>
             ) : (
-              <Body>{t('progress.projectedUnknown')}</Body>
+              <Body className={rtl.textAlign}>{t('progress.projectedUnknown')}</Body>
             )}
           </View>
         </Card>

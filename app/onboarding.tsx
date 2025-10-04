@@ -34,7 +34,7 @@ const OnboardingScreen: React.FC = () => {
   const rtl = useRTL();
 
   const [step, setStep] = useState<'duration' | 'breakdown'>('duration');
-  const [durationUnit, setDurationUnit] = useState<DurationUnit>('years');
+  const [durationUnit, setDurationUnit] = useState<DurationUnit>('months');
   const [durationValue, setDurationValue] = useState('1');
   const [counts, setCounts] = useState<Record<PrayerName, string>>({
     fajr: '0',
@@ -48,8 +48,6 @@ const OnboardingScreen: React.FC = () => {
   const [resolvingAddress, setResolvingAddress] = useState(false);
   const [locationLabel, setLocationLabel] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-
-  const isDark = settings?.theme === 'dark';
 
   const durationInYears = useMemo(() => {
     const value = parseFloat(durationValue.replace(',', '.'));
@@ -67,36 +65,28 @@ const OnboardingScreen: React.FC = () => {
   const perPrayer = useMemo(() => Math.max(Math.round(durationInYears * 365), 0), [durationInYears]);
   const totalEstimate = useMemo(() => calculateInitialEstimate(durationInYears), [durationInYears]);
 
-  const applyBaseCounts = useCallback(() => {
-    const value = String(perPrayer);
-    setCounts({
-      fajr: value,
-      dhuhr: value,
-      asr: value,
-      maghrib: value,
-      isha: value
-    });
-  }, [perPrayer]);
-
+  // Update counts when perPrayer changes, but ONLY if user hasn't manually adjusted
   useEffect(() => {
     if (!hasAdjusted) {
-      applyBaseCounts();
+      const value = String(perPrayer);
+      setCounts({
+        fajr: value,
+        dhuhr: value,
+        asr: value,
+        maghrib: value,
+        isha: value
+      });
     }
-  }, [applyBaseCounts, hasAdjusted]);
+  }, [perPrayer, hasAdjusted]);
 
   const handleCountChange = (prayer: PrayerName, value: string) => {
     setHasAdjusted(true);
     setCounts((prev) => ({ ...prev, [prayer]: value }));
   };
 
-  const resetAdjustments = () => {
-    setHasAdjusted(false);
-    applyBaseCounts();
-  };
-
   const handleLanguageSelect = async (language: 'en' | 'ar') => {
     if (settings?.language === language) return;
-    await setLanguage(language);
+    await setLanguage(language, true); // Skip reload on onboarding
     await i18n.changeLanguage(language);
   };
 
@@ -214,7 +204,7 @@ const OnboardingScreen: React.FC = () => {
                 'rounded-full border px-1 py-1 w-[fit-content] mb-2',
                 rtl.flexDirection,
                 rtl.selfEnd,
-                isDark ? 'border-white/15 bg-white/10' : 'border-olive/20 bg-white/80'
+                'border-olive/20 bg-white/80'
               )}
             >
               {languageOptions.map((option) => {
@@ -227,13 +217,13 @@ const OnboardingScreen: React.FC = () => {
                     onPress={() => handleLanguageSelect(option.code)}
                     className={clsx(
                       'rounded-full px-3 py-1.5 w-max',
-                      active ? (isDark ? 'bg-teal' : 'bg-olive') : 'bg-transparent'
+                      active ? 'bg-olive' : 'bg-transparent'
                     )}
                   >
                     <Text
                       className={clsx(
                         'text-xs font-semibold uppercase tracking-wide',
-                        active ? 'text-white' : isDark ? 'text-white/70' : 'text-olive/70'
+                        active ? 'text-white' : 'text-olive/70'
                       )}
                     >
                       {option.code.toUpperCase()}
@@ -245,12 +235,12 @@ const OnboardingScreen: React.FC = () => {
           <View className={clsx("mb-6 items-start justify-between", rtl.flexDirection)}>
             <View className={clsx("flex-1", rtl.pr("4"))}>
               <Heading className={clsx("text-3xl", rtl.textAlign)}>{t('onboarding.title')}</Heading>
-              <Body className={clsx("mt-2 text-olive/70 dark:text-white/70", rtl.textAlign)}>{t('onboarding.subtitle')}</Body>
+              <Body className={clsx("mt-2 text-olive/70", rtl.textAlign)}>{t('onboarding.subtitle')}</Body>
             </View>
           </View>
 
           <View className={clsx("mb-6 items-center justify-between gap-4", rtl.flexDirection)}>
-            <Text className={clsx("text-xs uppercase tracking-[2px] text-olive/60 dark:text-white/60", rtl.textAlign)}>
+            <Text className={clsx("text-xs uppercase tracking-[2px] text-olive/60", rtl.textAlign)}>
               {t('onboarding.stepLabel', { current: stepIndex, total: totalSteps })}
             </Text>
             <View className={clsx("flex-1 gap-1.5", rtl.flexDirection)}>
@@ -259,7 +249,7 @@ const OnboardingScreen: React.FC = () => {
                   key={index}
                   className={clsx(
                     'h-1 flex-1 rounded-full',
-                    index < stepIndex ? 'bg-teal' : 'bg-olive/30 dark:bg-white/20'
+                    index < stepIndex ? 'bg-teal' : 'bg-olive/30'
                   )}
                 />
               ))}
@@ -268,8 +258,8 @@ const OnboardingScreen: React.FC = () => {
 
           {step === 'duration' ? (
             <>
-              <View className="mb-5 rounded-3xl border border-olive/20 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10">
-                <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70">
+              <View className="mb-5 rounded-3xl border border-olive/20 bg-white/80 p-4">
+                <Text className="text-sm font-semibold uppercase tracking-wide text-olive/70">
                   {t('onboarding.durationLabel')}
                 </Text>
                 <View className={clsx("mt-3 items-center gap-3", rtl.flexDirection)}>
@@ -278,55 +268,45 @@ const OnboardingScreen: React.FC = () => {
                     value={durationValue}
                     onChangeText={setDurationValue}
                     placeholder="0"
-                    placeholderTextColor={isDark ? '#6b7280' : '#94a3b8'}
+                    placeholderTextColor="#94a3b8"
                     style={rtl.textInputStyle}
-                    className={clsx(
-                      'flex-0 rounded-2xl border border-olive/30 px-4 py-3 text-lg font-semibold text-teal',
-                      isDark && 'border-white/20 bg-transparent text-white'
-                    )}
+                    className="flex-0 rounded-2xl border border-olive/30 px-4 py-3 text-lg font-semibold text-teal"
                   />
-                  <View
-                    className={clsx(
-                      'flex-1 rounded-2xl border border-olive/30',
-                      isDark ? 'border-white/20 bg-white/5' : 'border-olive/30 bg-white'
-                    )}
-                  >
+                  <View className="flex-1 overflow-hidden rounded-2xl border border-olive/30 bg-white">
                     <Picker
                       selectedValue={durationUnit}
                       onValueChange={(value) => setDurationUnit(value as DurationUnit)}
                       style={{
-                        height: Platform.OS === 'ios' ? 120 : 50,
-                        color: isDark ? 'text-white' : 'text-olive',
+                        height: Platform.OS === 'ios' ? 100 : 50,
+                        color: '#7a8b71',
+                        backgroundColor: 'transparent',
                       }}
                       itemStyle={Platform.OS === 'ios' ? {
-                        height: 120,
-                        fontSize: 16,
+                        height: 100,
+                        fontSize: 13,
                         fontWeight: '600',
-                        color: isDark ? '#ffffff' : '#7a8b71',
-                      } : {
-                        color: isDark ? 'text-white' : 'text-olive',
-                        fontSize: 16,
-                        fontWeight: '600'
-                      }}
+                        color: '#7a8b71',
+                      } : undefined}
                     >
                       {(['days', 'months', 'years'] as DurationUnit[]).map((unit) => (
                         <Picker.Item
                           key={unit}
                           label={t(`onboarding.unit${unit.charAt(0).toUpperCase() + unit.slice(1)}`)}
                           value={unit}
-                          color={isDark ? '#ffffff' : '#7a8b71'}
+                          color="#7a8b71"
+                          style={{ fontWeight: '600' }}
                         />
                       ))}
                     </Picker>
                   </View>
                 </View>
-                <Body className="mt-3 text-sm text-olive/70 dark:text-white/60">
+                <Body className="mt-3 text-sm text-olive/70">
                   {t('onboarding.durationHint')}
                 </Body>
               </View>
 
-              <View className="mb-6 rounded-3xl border border-olive/20 bg-olive/10 p-4 dark:border-white/10 dark:bg-white/10">
-                <Text className="text-sm font-medium text-olive dark:text-white">
+              <View className="mb-6 rounded-3xl border border-olive/20 bg-olive/10 p-4">
+                <Text className="text-sm font-medium text-olive">
                   {t('onboarding.calculate', { total: totalEstimate.toLocaleString() })}
                 </Text>
               </View>
@@ -335,17 +315,17 @@ const OnboardingScreen: React.FC = () => {
             </>
           ) : (
             <>
-              <Body className="mb-4 text-olive/70 dark:text-white/70">{t('onboarding.adjust')}</Body>
+              <Body className="mb-4 text-olive/70">{t('onboarding.adjust')}</Body>
 
               {PRAYER_ORDER.map((prayer) => (
                 <View
                   key={prayer}
                   className={clsx(
-                    "mb-3 items-center justify-between rounded-3xl border border-olive/20 bg-white/70 px-4 py-3 dark:border-white/10 dark:bg-white/5",
+                    "mb-3 items-center justify-between rounded-3xl border border-olive/20 bg-white/70 px-4 py-3",
                     rtl.flexDirection
                   )}
                 >
-                  <Text className={clsx("text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70", rtl.textAlign)}>
+                  <Text className={clsx("text-sm font-semibold uppercase tracking-wide text-olive/70", rtl.textAlign)}>
                     {t(`prayers.${prayer}`)}
                   </Text>
                   <TextInput
@@ -355,26 +335,25 @@ const OnboardingScreen: React.FC = () => {
                     style={rtl.textInputStyle}
                     className={clsx(
                       'w-20 rounded-2xl border border-olive/30 px-3 py-2 text-teal',
-                      rtl.ml("3"),
-                      isDark && 'border-white/20 bg-transparent text-white'
+                      rtl.ml("3")
                     )}
                   />
                 </View>
               ))}
 
-              <View className="mt-2 rounded-3xl border border-olive/20 bg-white/70 px-4 py-4 dark:border-white/10 dark:bg-white/5">
+              <View className="mt-2 rounded-3xl border border-olive/20 bg-white/70 px-4 py-4">
                 <View className={clsx("items-center justify-between", rtl.flexDirection)}>
-                  <Text className={clsx("text-sm font-semibold uppercase tracking-wide text-olive/70 dark:text-white/70", rtl.textAlign)}>
+                  <Text className={clsx("text-sm font-semibold uppercase tracking-wide text-olive/70", rtl.textAlign)}>
                     {t('onboarding.locationReady')}
                   </Text>
                   {(loadingLocation || resolvingAddress) && (
-                    <ActivityIndicator size="small" color={isDark ? '#ffffff' : '#0f766e'} />
+                    <ActivityIndicator size="small" color="#7a8b71" />
                   )}
                 </View>
                 <Text
                   className={clsx(
                     'mt-3 text-sm',
-                    locationError ? 'text-rose-500' : isDark ? 'text-white' : 'text-teal'
+                    locationError ? 'text-rose-500' : 'text-teal'
                   )}
                   numberOfLines={2}
                 >
@@ -394,9 +373,6 @@ const OnboardingScreen: React.FC = () => {
               <View className="mt-6 space-y-3">
                 <Button title={t('onboarding.continue')} onPress={handleContinue} />
                 <Button style={{ marginTop: 12 }} title={t('forms.back')} variant="secondary" onPress={handleBack} />
-                {hasAdjusted && (
-                  <Button style={{ marginTop: 12 }} title={t('onboarding.reset')} variant="secondary" onPress={resetAdjustments} />
-                )}
               </View>
             </>
           )}

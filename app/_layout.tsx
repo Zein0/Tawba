@@ -11,25 +11,26 @@ const SyncLanguage: React.FC = () => {
 
   useEffect(() => {
     if (!settings) return;
+
+    // Sync i18n language
     if (i18n.language !== settings.language) {
       i18n.changeLanguage(settings.language);
     }
-    // Enable RTL support without forcing restart
+
+    // Enable RTL support globally
     const shouldUseRTL = settings.language === 'ar';
     I18nManager.allowRTL(true);
     I18nManager.swapLeftAndRightInRTL(true);
+
+    // Force RTL direction based on language
+    if (I18nManager.isRTL !== shouldUseRTL) {
+      I18nManager.forceRTL(shouldUseRTL);
+    }
   }, [settings?.language]);
 
   useEffect(() => {
-    if (!settings) return;
-    if (settings.theme === 'dark') {
-      StatusBar.setBarStyle('light-content');
-    } else if (settings.theme === 'light') {
-      StatusBar.setBarStyle('dark-content');
-    } else {
-      StatusBar.setBarStyle('default');
-    }
-  }, [settings?.theme]);
+    StatusBar.setBarStyle('dark-content');
+  }, []);
 
   return null;
 };
