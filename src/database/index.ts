@@ -120,7 +120,6 @@ export const getSettings = async (): Promise<Settings> => {
     remindersEnabled:
       (deserializeSettingValue('remindersEnabled', map[settingKeyMap.remindersEnabled]) as Settings['remindersEnabled']) ??
       true,
-    theme: (deserializeSettingValue('theme', map[settingKeyMap.theme]) as Settings['theme']) ?? 'system',
     location: (deserializeSettingValue('location', map[settingKeyMap.location]) as Settings['location']) ?? null
   };
 };

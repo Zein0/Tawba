@@ -47,9 +47,8 @@ const HomeScreen: React.FC = () => {
   const handleSubmit = async (log: Omit<PrayerLog, 'id'>) => {
     await addLog(log);
   };
-
   return (
-    <ScreenContainer>
+    <ScreenContainer style={{ textAlign: rtl.textAlign === 'text-right' ? 'right' : 'left' }}>
       <Card>
         <Heading className={clsx("mb-1", rtl.textAlign)}>{t('dashboard.greeting')}</Heading>
         <Body className={clsx("mb-4", rtl.textAlign)}>{dayjs().format('dddd, MMM D')}</Body>

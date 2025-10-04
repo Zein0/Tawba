@@ -1,26 +1,21 @@
 import { Platform } from 'react-native';
+import * as Updates from 'expo-updates';
 
 /**
- * Reloads the app to apply RTL/language changes
- * Works in both development and production
+ * Fully reloads the app to apply RTL/language changes
+ * This does a complete restart that shows the splash screen
  */
-export const reloadApp = () => {
+export const reloadApp = async () => {
   if (Platform.OS === 'web') {
     // Web reload
     window.location.reload();
     return;
   }
 
-  // For native platforms, we need to use the DevSettings module
-  // This works in both dev and production builds
+  // For native platforms, use expo-updates to do a full reload
   try {
-    const { DevSettings } = require('react-native');
-    if (DevSettings && typeof DevSettings.reload === 'function') {
-      DevSettings.reload();
-    } else {
-      console.warn('DevSettings.reload is not available. App needs manual restart.');
-    }
+    await Updates.reloadAsync();
   } catch (error) {
-    console.warn('Could not reload app automatically. Please restart manually.');
+    console.warn('Could not reload app automatically. Please restart manually.', error);
   }
 };

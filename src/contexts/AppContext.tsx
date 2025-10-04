@@ -29,7 +29,7 @@ interface AppContextShape {
   addLog: (log: Omit<PrayerLog, 'id'>) => Promise<void>;
   editLog: (log: PrayerLog) => Promise<void>;
   removeLog: (id: number) => Promise<void>;
-  setLanguage: (language: Settings['language'], skipReload?: boolean) => Promise<void>;
+  setLanguage: (language: Settings['language']) => Promise<void>;
   setFontSize: (size: Settings['fontSize']) => Promise<void>;
   setRemindersEnabled: (enabled: boolean) => Promise<void>;
   updateLocation: (location: Settings['location']) => Promise<void>;
@@ -115,7 +115,7 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
     await refresh();
   };
 
-  const setLanguage = async (language: Settings['language'], skipReload?: boolean) => {
+  const setLanguage = async (language: Settings['language']) => {
     // Save language to database
     await updateSetting('language', language);
 
@@ -127,14 +127,8 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
       // Force the new RTL direction
       I18nManager.forceRTL(shouldUseRTL);
 
-      // Reload the app to apply changes immediately (unless we're on onboarding)
-      if (!skipReload) {
-        setTimeout(() => {
-          reloadApp();
-        }, 100); // Small delay to ensure database write completes
-      } else {
-        await refresh();
-      }
+      // Full reload to apply RTL changes
+      await reloadApp();
     } else {
       // Just refresh if no RTL change needed
       await refresh();

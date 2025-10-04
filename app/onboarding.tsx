@@ -86,8 +86,8 @@ const OnboardingScreen: React.FC = () => {
 
   const handleLanguageSelect = async (language: 'en' | 'ar') => {
     if (settings?.language === language) return;
-    await setLanguage(language, true); // Skip reload on onboarding
     await i18n.changeLanguage(language);
+    await setLanguage(language);
   };
 
   const fetchLocationLabel = useCallback(async (coords: Coordinates) => {
