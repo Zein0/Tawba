@@ -29,6 +29,7 @@ export const resources = {
         locationError: 'We could not determine your location. Please try again.'
       },
       dashboard: {
+        home: 'Home',
         greeting: 'Peace be upon you',
         nextPrayer: 'Next prayer',
         nextPrayerAt: 'Scheduled at {{time}}',
@@ -191,6 +192,7 @@ export const resources = {
         locationError: 'تعذر تحديد موقعك. حاول مرة أخرى.'
       },
       dashboard: {
+        home: 'الرئيسية',
         greeting: 'السلام عليكم',
         nextPrayer: 'الصلاة القادمة',
         nextPrayerAt: 'موعدها {{time}}',

@@ -45,7 +45,7 @@ const TabLayout: React.FC = () => {
         }
       })}
     >
-      <Tabs.Screen name="home" options={{ title: t('dashboard.greeting') }} />
+      <Tabs.Screen name="home" options={{ title: t('dashboard.home') }} />
       <Tabs.Screen name="prayer-times" options={{ title: t('prayerTimes.shortTitle') }} />
       <Tabs.Screen name="logs" options={{ title: t('logs.title') }} />
       <Tabs.Screen name="progress" options={{ title: t('progress.title') }} />
