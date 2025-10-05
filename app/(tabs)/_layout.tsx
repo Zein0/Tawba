@@ -22,7 +22,7 @@ const TabLayout: React.FC = () => {
           shadowOpacity: 0,
           shadowOffset: { width: 0, height: 0 },
           shadowRadius: 0,
-          height: Platform.OS === 'ios' ? 72 : 72,
+          height: Platform.OS === 'ios' ? 82 : 72,
           paddingBottom: Platform.OS === 'ios' ? 20 : 20,
           paddingTop: Platform.OS === 'ios' ? 12 : 12,
           flexDirection: rtl.isRTL ? 'row-reverse' : 'row',

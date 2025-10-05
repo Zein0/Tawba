@@ -17,8 +17,8 @@ interface LocationDetails {
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true, // Enable notification sound
+    shouldSetBadge: true, // Show badge count
     shouldShowBanner: true,
     shouldShowList: true
   })

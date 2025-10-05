@@ -58,6 +58,19 @@ export const schedulePrayerNotifications = async (
   language: 'en' | 'ar'
 ) => {
   await Notifications.cancelAllScheduledNotificationsAsync();
+
+  // Set notification channel for Android (icon automatically uses app icon)
+  await Notifications.setNotificationChannelAsync('prayer-reminders', {
+    name: 'Prayer Reminders',
+    importance: Notifications.AndroidImportance.HIGH,
+    vibrationPattern: [0, 250, 250, 250],
+    sound: 'default',
+    enableVibrate: true,
+    enableLights: true,
+    lightColor: '#7a8b71',
+    showBadge: true,
+  });
+
   const now = dayjs();
 
   for (const entry of prayerTimes) {
@@ -78,11 +91,17 @@ export const schedulePrayerNotifications = async (
     await Notifications.scheduleNotificationAsync({
       content: {
         ...content,
-        data: { prayer: entry.prayer }
+        data: { prayer: entry.prayer },
+        sound: 'default',
+        badge: 1,
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+        color: '#7a8b71',
+        categoryIdentifier: 'prayer-reminders',
       },
       trigger: {
         type: SchedulableTriggerInputTypes.DATE,
-        date: triggerTime.toDate()
+        date: triggerTime.toDate(),
+        channelId: 'prayer-reminders',
       }
     });
   }

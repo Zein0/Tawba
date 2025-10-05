@@ -15,7 +15,6 @@ import {
 } from '@/database';
 import { MissedEstimate, PrayerLog, PrayerName, PrayerSummary, ProgressProjection, Settings } from '@/types';
 import { buildProjection, summarizePrayers, sortLogs } from '@/utils/calculations';
-import { reloadApp } from '@/utils/reload';
 
 interface AppContextShape {
   loading: boolean;
@@ -116,23 +115,18 @@ export const AppProvider: React.FC<React.PropsWithChildren> = ({ children }) => 
   };
 
   const setLanguage = async (language: Settings['language']) => {
-    // Save language to database
+    // Save language to database first
     await updateSetting('language', language);
 
-    // Force RTL direction for the new language
-    const shouldUseRTL = language === 'ar';
+    // Determine if RTL is needed for this language
+    const shouldBeRTL = language === 'ar';
 
-    // Check if RTL direction needs to change
-    if (I18nManager.isRTL !== shouldUseRTL) {
-      // Force the new RTL direction
-      I18nManager.forceRTL(shouldUseRTL);
+    // Enable RTL support and set the direction
+    I18nManager.allowRTL(shouldBeRTL);
+    I18nManager.forceRTL(shouldBeRTL);
 
-      // Full reload to apply RTL changes
-      await reloadApp();
-    } else {
-      // Just refresh if no RTL change needed
-      await refresh();
-    }
+    // Just refresh context to pick up language change
+    await refresh();
   };
 
   const setFontSize = async (size: Settings['fontSize']) => {
